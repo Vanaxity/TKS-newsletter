@@ -1,0 +1,16 @@
+# dependencies
+node_modules/
+
+# Next.js / Vercel
+.next/
+out/
+.vercel/
+
+# secrets: never commit these
+.env
+.env.*
+!.env.example
+
+# misc
+.DS_Store
+*.log
