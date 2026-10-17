@@ -6,11 +6,11 @@ const reply = (status: number, body: unknown) => new Response(JSON.stringify(bod
 const noSleep = async () => {};
 
 test("sends only the URL and the prompt, returns content and cost", async () => {
-  const fake = vi.fn(async (..._args: unknown[]) => reply(200, okBody));
+  const fake = vi.fn<typeof fetch>(async () => reply(200, okBody));
   const r = await callOpenRouter("https://www.youtube.com/watch?v=aircAruvnKk", {
     apiKey: "k",
     model: "google/gemini-3.5-flash-lite",
-    fetchImpl: fake as unknown as typeof fetch,
+    fetchImpl: fake,
     sleep: noSleep,
   });
   expect(r).toEqual({ ok: true, content: '{"a":1}', costUsd: 0.0326 });

@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "typecheck": "next typegen && tsc --noEmit",
-    "test": "vitest run --passWithNoTests"
+    "test": "vitest run --passWithNoTests",
+    "summarise": "tsx scripts/summarise.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.118.0",
