@@ -1,0 +1,18 @@
+@import "tailwindcss";
+
+@theme {
+  --color-tks-green: #51b04c;
+  --color-tks-green-hover: #459a40;
+  --color-tks-black: #17191a;
+  --color-tks-offwhite: #f2f2f2;
+  --color-tks-white: #ffffff;
+  --color-tks-grey: #8f9091;
+  --color-tks-line: #d3d3d3;
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+}
+
+body {
+  background: var(--color-tks-offwhite);
+  color: var(--color-tks-black);
+}
