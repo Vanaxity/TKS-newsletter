@@ -15,7 +15,7 @@ It is for **TKS students only**. Most of them are minors and most will read on t
 
 1. Every YouTube video posted in #r-thisiscool becomes an article automatically, but **nothing goes live until a person approves it** in Slack.
 2. A student signs up, picks interests, and gets a feed of **only** articles tagged with those interests.
-3. Reading an article is a pleasure: they can **rate it out of 10**, **save it for later**, and **share a link**.
+3. Reading an article is a pleasure: they can **rate it out of 10**, **save it for later**, **repost it**, and **share a link**.
 4. The homepage blows people away: TKS colours, React Bits components, a first impression that feels premium.
 5. Ben's weekly **TKS Weekly newsletter issues** also live on the site, members only.
 6. The project is built cleanly: feature branches, pull requests, no secrets in Git.
@@ -23,7 +23,7 @@ It is for **TKS students only**. Most of them are minors and most will read on t
 ## Non-goals (v1)
 
 - Google, Slack or any other single sign-on. Login is email + password.
-- A recommendation algorithm beyond interest tags. "Recommended" means "tagged with one of your interests", newest first. (Ratings are stored, so smarter ranking can come later.)
+- Machine-learning recommendations. The feed uses the simple, explainable rules under "The feed" below. (Ratings are stored, so smarter ranking can come later.)
 - Comments or discussion threads.
 - Building or changing Ben's newsletter pipeline (Apps Script, in `nubidubi09/tks-newsletter`). This site only *receives* his finished issues.
 - Videos from anywhere other than YouTube.
@@ -67,11 +67,11 @@ It is for **TKS students only**. Most of them are minors and most will read on t
 | **Homepage** | Everyone | The big first impression in TKS colours, what the site is, Sign up / Log in. Built from Sam's React Bits favourites. |
 | **Sign up** | Everyone | Three steps: **account** (email, password, TKS join code) → **profile** (username, photo, name, cohort, city) → **interests**. See below. |
 | **Log in** | Everyone | Email + password. |
-| **Feed** | Members | Articles tagged with any of the member's interests, newest first. Filter by one interest. |
+| **Feed** | Members | Mostly articles in the member's interests, boosted by reposts, plus a few from outside their interests. See "The feed". Filter by one interest with Option Wheel. |
 | **Article** | Members: full. Non-members: first half | Headline, subtitle, tags, read time, embedded YouTube video, the article. Rate /10 (React Bits **Comet Dial**), Save, Share. |
 | **Newsletter** | Members only | Ben's TKS Weekly issues, newest first: title, week, TL;DR. Each issue opens as its own page. |
 | **Saved** | Members | Articles they saved. |
-| **Profile** `/u/<username>` | Members only | **Every student has one** (decided by Sam), shown as a React Bits **Profile Card**: photo, name, @username, cohort, city, interests. Members can view each other's profiles; non-members never can. Your own profile has an Edit button. |
+| **Profile** `/u/<username>` | Members only | **Every student has one** (decided by Sam), shown as a React Bits **Profile Card**: photo, name, @username, cohort, city, interests, and their **Reposts**. Members can view each other's profiles; non-members never can. Your own profile has an Edit button. |
 | **Interests** | Members | Change interests any time. |
 | **Admin** | Admins | Write/edit articles, see drafts, manage the join code and interest list. |
 
@@ -82,7 +82,7 @@ It is for **TKS students only**. Most of them are minors and most will read on t
    - **Username:** unique, 3–20 characters, lowercase letters, numbers and underscores. It becomes the profile address `/u/<username>`. **(rules are my call)**
    - **Profile picture:** upload a photo (JPG/PNG/WebP, up to 5 MB). It's cropped to a square and resized to 512×512 before saving, stored in Supabase Storage. Until someone uploads one, they get an avatar with their initials on TKS green. Changeable any time from Edit profile. **(my call)**
    - **Name:** first and last, shown on the profile.
-   - **Cohort:** **Global** or **In-person**.
+   - **Cohort:** "Which cohort are you from?" First **Global** or **In-person**, then the specific cohort from a list (decided by Sam). The list is managed by admins. **(my call)** Sam will supply the real cohort names; until then it's seeded with placeholders.
    - **City:** free text, required. **(my call: free text rather than a fixed list)**
 3. **Interests:** pick at least one.
 
@@ -108,11 +108,21 @@ The member can't reach the feed until all three steps are done; if they leave ha
 - **Stricter wall than articles:** issues name students, so a non-member who opens an issue link sees only the title and a sign-up prompt. No public first half.
 - The body already starts with the title as a `# heading`; the page shows it once.
 
-### Rating, saving, sharing
+### The feed
+
+Decided by Sam: reposts push articles up, and every feed includes some articles **outside** your interests, to encourage learning beyond them.
+
+- **Your interests first.** Published articles tagged with any of your interests, ranked by freshness plus reposts: each repost lifts an article, and the lift fades as the article ages so the feed doesn't freeze. **(exact formula: my call, tunable)**
+- **Explore picks.** About **1 in every 5** feed items is from outside your interests, labelled "Outside your interests". **(ratio: my call)**
+- **Trending crosses over.** Articles reposted **5 or more times** become eligible as Explore picks for everyone, so a widely reposted article reaches people whose interests don't match it. When there aren't enough trending articles, Explore picks fall back to the newest articles outside your interests.
+- Articles you've already rated are moved down; your own reposts don't count toward your own feed.
+
+### Rating, saving, reposting, sharing
 
 - **Rate 1–10** with Comet Dial. One rating per member per article; they can change it. Show the average once an article has a few ratings **(my call: 3+)**.
-- **Save** toggles the article in their Saved list.
-- **Share** copies the link (native share sheet on phones).
+- **Save** toggles the article in their Saved list (private).
+- **Repost** puts the article on your profile under "Reposts" and lifts it in everyone's feed (see "The feed"). One repost per member per article; it can be undone. The repost count shows on the article. (Decided by Sam: this is a repost, not a share.)
+- **Share** copies the link (native share sheet on phones). A non-member who opens it gets the half-article wall.
 
 ### Interests
 
@@ -146,11 +156,13 @@ A fixed list that every article tag must come from, so the filter stays consiste
 
 Rough shape; the builder may refine it.
 
-- `profiles`: user id, username (unique), first name, last name, avatar path, cohort (global / in_person), city, role (member / admin), onboarding step, created at.
+- `profiles`: user id, username (unique), first name, last name, avatar path, cohort id, city, role (member / admin), onboarding step, created at.
 - `interests`: id, slug, label.
 - `profile_interests`: user ↔ interest.
 - `articles`: id, YouTube video id (unique), source (channel / submission / written), status (draft / published / rejected), headline, subtitle, body Markdown, tags, read minutes, video title, channel, video minutes, shared-by Slack user id (private), created / published at.
+- `cohorts`: id, name, type (global / in_person), active.
 - `ratings`: user, article, score 1–10.
+- `reposts`: user, article, created at. Repost count per article is derived from this.
 - `saves`: user, article.
 - `issues`: issue number (unique), title, date, period, TL;DR list, body Markdown, received at.
 - `settings`: join code, approver Slack ids, pipeline on/off switch.
@@ -186,7 +198,7 @@ Row Level Security on everything. Members read published articles and their own 
 1. **Scaffold:** Next.js app at the repo root, Tailwind, TKS colours and fonts, Supabase project, Vercel project, preview deploys working.
 2. **Accounts:** sign up with join code, log in, pick interests.
 3. **Articles:** article page with the half-article wall, feed filtered by interests, seed articles (including the spike article).
-4. **Reader actions:** rate (Comet Dial), save, share, Saved page.
+4. **Reader actions:** rate (Comet Dial), save, repost, share, Saved page, the feed ranking with Explore picks.
 5. **Homepage:** the jaw-dropper, with Sam's React Bits favourites.
 6. **Pipeline:** first the video summariser (YouTube link in, checked draft article out, runnable from the command line and tested), then the Slack app around it: link detection, approval buttons, publish. Built now but **switched off** for real student videos until a director okays using Gemini (decided by Sam).
 7. **Newsletter issues:** `/api/issues` endpoint, issue pages, members-only wall. Tell Ben the new hand-off.
