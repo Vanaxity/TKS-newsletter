@@ -32,14 +32,28 @@ export function canonicalUrl(videoId: string): string {
   return `https://www.youtube.com/watch?v=${videoId}`;
 }
 
-export type OEmbed = { title: string; authorName: string };
+export type OEmbedResult =
+  | { ok: true; title: string; authorName: string }
+  // unavailable: YouTube says the video can't be shown (private or deleted). Otherwise the lookup itself failed.
+  | { ok: false; unavailable: boolean; reason: string };
 
-// YouTube's oEmbed doesn't answer for private or deleted videos, so null means we can't use it.
-export async function fetchOEmbed(videoId: string, fetchImpl: typeof fetch = fetch): Promise<OEmbed | null> {
-  const res = await fetchImpl(
-    `https://www.youtube.com/oembed?format=json&url=${encodeURIComponent(canonicalUrl(videoId))}`,
-  );
-  if (res.status !== 200) return null;
-  const body = (await res.json()) as { title: string; author_name: string };
-  return { title: body.title, authorName: body.author_name };
+const UNAVAILABLE_STATUSES = new Set([400, 401, 403, 404]);
+
+export async function fetchOEmbed(videoId: string, fetchImpl: typeof fetch = fetch): Promise<OEmbedResult> {
+  let res: Response;
+  try {
+    res = await fetchImpl(`https://www.youtube.com/oembed?format=json&url=${encodeURIComponent(canonicalUrl(videoId))}`);
+  } catch (err) {
+    return { ok: false, unavailable: false, reason: err instanceof Error ? err.message : String(err) };
+  }
+  if (res.status !== 200) {
+    return { ok: false, unavailable: UNAVAILABLE_STATUSES.has(res.status), reason: `HTTP ${res.status}` };
+  }
+  try {
+    const body = (await res.json()) as { title?: unknown; author_name?: unknown };
+    if (typeof body?.title !== "string" || !body.title) throw new Error();
+    return { ok: true, title: body.title, authorName: typeof body.author_name === "string" ? body.author_name : "" };
+  } catch {
+    return { ok: false, unavailable: false, reason: "unexpected reply" };
+  }
 }

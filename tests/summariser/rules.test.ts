@@ -34,3 +34,20 @@ test("titles that differ only in punctuation match", () => {
 test("different titles do not match", () => {
   expect(titlesMatch("But what is a neural network?", "How transformers work")).toBe(false);
 });
+
+test("a different episode of the same series does not match", () => {
+  expect(
+    titlesMatch(
+      "But what is a neural network? | Deep learning chapter 1",
+      "But what is a neural network? | Deep learning chapter 2",
+    ),
+  ).toBe(false);
+  expect(
+    titlesMatch("How I built a rocket engine in my garage - Part 1", "How I built a rocket engine in my garage - Part 2"),
+  ).toBe(false);
+});
+
+test("accents don't break a match", () => {
+  expect(titlesMatch("Résumé tips for teens", "Resume tips for teens")).toBe(true);
+  expect(titlesMatch("Pokémon evolution explained", "Pokemon evolution explained")).toBe(true);
+});

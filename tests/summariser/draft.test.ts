@@ -40,3 +40,8 @@ test.each([
 test("rejects non-JSON", () => {
   expect(parseDraft("Sorry, I cannot watch that video.")).toEqual({ ok: false, reason: "reply was not JSON" });
 });
+
+test("tags are lowercased and de-duplicated before checking", () => {
+  const r = parseDraft(JSON.stringify({ ...good, tags: ["AI", "ai", "Math"] }));
+  expect(r.ok && r.draft.tags).toEqual(["ai", "math"]);
+});

@@ -24,10 +24,13 @@ export function readMinutes(words: number): number {
 function normalise(title: string): string {
   return title
     .normalize("NFKD")
+    .replace(/\p{M}/gu, "") // drop accents so "Pokémon" matches "Pokemon"
     .toLowerCase()
     .replace(/[^\p{L}\p{N}]+/gu, " ")
     .trim();
 }
+
+const numberWords = (words: Set<string>) => [...words].filter((w) => /\d/.test(w)).sort().join(" ");
 
 // Loose match so punctuation differences pass but a different video's title doesn't.
 export function titlesMatch(a: string, b: string): boolean {
@@ -36,6 +39,8 @@ export function titlesMatch(a: string, b: string): boolean {
   if (na === nb) return true;
   const wa = new Set(na.split(" "));
   const wb = new Set(nb.split(" "));
+  // "chapter 1" vs "chapter 2" is a different video even though almost every word matches.
+  if (numberWords(wa) !== numberWords(wb)) return false;
   const shared = [...wa].filter((w) => wb.has(w)).length;
   return shared / new Set([...wa, ...wb]).size >= 0.8;
 }

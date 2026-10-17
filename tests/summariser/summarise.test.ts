@@ -57,7 +57,7 @@ test("private or deleted video → rejected before any paid call", async () => {
   expect(r).toEqual({
     status: "rejected",
     videoId: "aircAruvnKk",
-    reason: "Video is private, unlisted or deleted",
+    reason: "Video is private or deleted",
     costUsd: 0,
   });
   expect(openRouterCalls(fake)).toBe(0);
@@ -130,4 +130,27 @@ test("a model override reaches the request", async () => {
   await summariseVideo(URL_, { apiKey: "k", model: "google/gemini-3.8-flash", fetchImpl: fake, sleep: noSleep });
   const call = fake.mock.calls.find(([u]) => String(u).includes("openrouter.ai"))!;
   expect(JSON.parse((call as unknown as [string, RequestInit])[1].body as string).model).toBe("google/gemini-3.8-flash");
+});
+
+test("a YouTube lookup failure is a failure, not a rejection, and costs nothing", async () => {
+  const fake = routes({ oembed: new Response("", { status: 503 }) });
+  expect(await summariseVideo(URL_, { apiKey: "k", fetchImpl: fake })).toEqual({
+    status: "failed",
+    videoId: "aircAruvnKk",
+    reason: "YouTube lookup failed: HTTP 503",
+    costUsd: 0,
+  });
+  expect(openRouterCalls(fake)).toBe(0);
+});
+
+test("no network at all → failed with a reason, never a crash", async () => {
+  const fake = vi.fn(async (): Promise<Response> => {
+    throw new TypeError("fetch failed");
+  });
+  expect(await summariseVideo(URL_, { apiKey: "k", fetchImpl: fake, sleep: noSleep })).toEqual({
+    status: "failed",
+    videoId: "aircAruvnKk",
+    reason: "YouTube lookup failed: fetch failed",
+    costUsd: 0,
+  });
 });

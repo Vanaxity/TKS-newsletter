@@ -20,7 +20,11 @@ export async function summariseVideo(
   if (!videoId) return { status: "rejected", videoId: null, reason: "No YouTube link found", costUsd: 0 };
 
   const oembed = await fetchOEmbed(videoId, deps.fetchImpl);
-  if (!oembed) return { status: "rejected", videoId, reason: "Video is private, unlisted or deleted", costUsd: 0 };
+  if (!oembed.ok) {
+    return oembed.unavailable
+      ? { status: "rejected", videoId, reason: "Video is private or deleted", costUsd: 0 }
+      : { status: "failed", videoId, reason: `YouTube lookup failed: ${oembed.reason}`, costUsd: 0 };
+  }
 
   const call = await callOpenRouter(canonicalUrl(videoId), {
     apiKey: deps.apiKey,

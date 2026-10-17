@@ -22,12 +22,30 @@ test.each([
 
 test("fetchOEmbed maps title and author", async () => {
   const fake = vi.fn(async () => new Response(JSON.stringify({ title: "T", author_name: "A" }), { status: 200 }));
-  expect(await fetchOEmbed(ID, fake)).toEqual({ title: "T", authorName: "A" });
+  expect(await fetchOEmbed(ID, fake)).toEqual({ ok: true, title: "T", authorName: "A" });
   expect(String((fake.mock.calls[0] as unknown[])[0])).toContain(encodeURIComponent(canonicalUrl(ID)));
 });
 
-test("fetchOEmbed returns null for private or missing videos", async () => {
-  for (const status of [401, 403, 404]) {
-    expect(await fetchOEmbed(ID, async () => new Response("", { status }))).toBeNull();
+test("fetchOEmbed marks private or deleted videos as unavailable", async () => {
+  for (const status of [400, 401, 403, 404]) {
+    expect(await fetchOEmbed(ID, async () => new Response("", { status }))).toEqual({
+      ok: false,
+      unavailable: true,
+      reason: `HTTP ${status}`,
+    });
   }
+});
+
+const throwsNetwork = async (): Promise<Response> => {
+  throw new TypeError("fetch failed");
+};
+
+test.each([
+  ["a YouTube outage", async () => new Response("", { status: 503 }), "HTTP 503"],
+  ["a rate limit", async () => new Response("", { status: 429 }), "HTTP 429"],
+  ["no network", throwsNetwork, "fetch failed"],
+  ["a non-JSON page", async () => new Response("<html>consent</html>", { status: 200 }), "unexpected reply"],
+  ["a reply without a title", async () => new Response(JSON.stringify({ author_name: "A" }), { status: 200 }), "unexpected reply"],
+])("fetchOEmbed reports %s as a lookup failure, not unavailable", async (_, impl, reason) => {
+  expect(await fetchOEmbed(ID, impl as typeof fetch)).toEqual({ ok: false, unavailable: false, reason });
 });

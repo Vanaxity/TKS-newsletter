@@ -8,7 +8,11 @@ export const DraftSchema = z.object({
   video_minutes: z.number().positive(),
   headline: z.string().min(1),
   dek: z.string().min(1),
-  tags: z.array(z.enum(INTEREST_SLUGS)).min(1).max(3),
+  // Lowercase and de-duplicate first, so "AI" for the slug "ai" doesn't throw away a paid draft.
+  tags: z.preprocess(
+    (v) => (Array.isArray(v) ? [...new Set(v.map((t) => (typeof t === "string" ? t.trim().toLowerCase() : t)))] : v),
+    z.array(z.enum(INTEREST_SLUGS)).min(1).max(3),
+  ),
   article_markdown: z.string().min(1),
 });
 

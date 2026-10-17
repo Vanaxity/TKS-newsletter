@@ -39,4 +39,7 @@ async function main() {
   console.log(draft.articleMarkdown);
 }
 
-main();
+main().catch((err) => {
+  console.error(`error: ${err instanceof Error ? err.message : String(err)}`);
+  process.exitCode = 1;
+});
