@@ -65,15 +65,28 @@ It is for **TKS students only**. Most of them are minors and most will read on t
 | Page | Who sees it | What's on it |
 |---|---|---|
 | **Homepage** | Everyone | The big first impression in TKS colours, what the site is, Sign up / Log in. Built from Sam's React Bits favourites. |
-| **Sign up** | Everyone | Email, password, **TKS join code**, then pick interests. |
+| **Sign up** | Everyone | Three steps: **account** (email, password, TKS join code) → **profile** (username, photo, name, cohort, city) → **interests**. See below. |
 | **Log in** | Everyone | Email + password. |
 | **Feed** | Members | Articles tagged with any of the member's interests, newest first. Filter by one interest. |
 | **Article** | Members: full. Non-members: first half | Headline, subtitle, tags, read time, embedded YouTube video, the article. Rate /10 (React Bits **Comet Dial**), Save, Share. |
 | **Newsletter** | Members only | Ben's TKS Weekly issues, newest first: title, week, TL;DR. Each issue opens as its own page. |
 | **Saved** | Members | Articles they saved. |
-| **Profile** | Members | Their own React Bits **Profile Card**: name, interests, articles read and rated. **(my guess at what Profile Card is for)** |
+| **Profile** `/u/<username>` | Members only | **Every student has one** (decided by Sam), shown as a React Bits **Profile Card**: photo, name, @username, cohort, city, interests. Members can view each other's profiles; non-members never can. Your own profile has an Edit button. |
 | **Interests** | Members | Change interests any time. |
 | **Admin** | Admins | Write/edit articles, see drafts, manage the join code and interest list. |
+
+### Signing up: account, then profile, then interests
+
+1. **Account:** email, password, TKS join code.
+2. **Profile** (decided by Sam):
+   - **Username:** unique, 3–20 characters, lowercase letters, numbers and underscores. It becomes the profile address `/u/<username>`. **(rules are my call)**
+   - **Profile picture:** upload a photo (JPG/PNG/WebP, up to 5 MB). It's cropped to a square and resized to 512×512 before saving, stored in Supabase Storage. Until someone uploads one, they get an avatar with their initials on TKS green. Changeable any time from Edit profile. **(my call)**
+   - **Name:** first and last, shown on the profile.
+   - **Cohort:** **Global** or **In-person**.
+   - **City:** free text, required. **(my call: free text rather than a fixed list)**
+3. **Interests:** pick at least one.
+
+The member can't reach the feed until all three steps are done; if they leave halfway, they resume at the step they left.
 
 ### Accounts and the TKS check
 
@@ -133,7 +146,7 @@ A fixed list that every article tag must come from, so the filter stays consiste
 
 Rough shape; the builder may refine it.
 
-- `profiles`: user id, display name, role (member / admin), created at.
+- `profiles`: user id, username (unique), first name, last name, avatar path, cohort (global / in_person), city, role (member / admin), onboarding step, created at.
 - `interests`: id, slug, label.
 - `profile_interests`: user ↔ interest.
 - `articles`: id, YouTube video id (unique), source (channel / submission / written), status (draft / published / rejected), headline, subtitle, body Markdown, tags, read minutes, video title, channel, video minutes, shared-by Slack user id (private), created / published at.
@@ -141,6 +154,8 @@ Rough shape; the builder may refine it.
 - `saves`: user, article.
 - `issues`: issue number (unique), title, date, period, TL;DR list, body Markdown, received at.
 - `settings`: join code, approver Slack ids, pipeline on/off switch.
+
+- Storage bucket `avatars`: readable by signed-in members only; each member can write only their own file.
 
 Row Level Security on everything. Members read published articles and their own ratings, saves and interests. Only the server (service role) writes drafts and publishes.
 
