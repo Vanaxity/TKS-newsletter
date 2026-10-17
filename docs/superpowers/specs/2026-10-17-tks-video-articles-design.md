@@ -33,7 +33,7 @@ It is for **TKS students only**. Most of them are minors and most will read on t
 - An article that states things the video never said.
 - Anything published without a human approving it.
 - Student names or Slack messages visible to people outside TKS.
-- A homepage so heavy it stutters on a mid-range phone. "Blown away" has to survive a phone on school Wi-Fi. **(my call: no full-screen WebGL backgrounds on mobile)**
+- A homepage so heavy it stutters on a mid-range phone. "Blown away" has to survive a phone on school Wi-Fi. The canvas effects (Dither, ASCII Text) pause when off-screen, drop resolution on phones, and fall back to a still image when the reader has "reduce motion" on. **(my call)**
 
 ## How a video becomes an article
 
@@ -71,6 +71,7 @@ It is for **TKS students only**. Most of them are minors and most will read on t
 | **Article** | Members: full. Non-members: first half | Headline, subtitle, tags, read time, embedded YouTube video, the article. Rate /10 (React Bits **Comet Dial**), Save, Share. |
 | **Newsletter** | Members only | Ben's TKS Weekly issues, newest first: title, week, TL;DR. Each issue opens as its own page. |
 | **Saved** | Members | Articles they saved. |
+| **Profile** | Members | Their own React Bits **Profile Card**: name, interests, articles read and rated. **(my guess at what Profile Card is for)** |
 | **Interests** | Members | Change interests any time. |
 | **Admin** | Admins | Write/edit articles, see drafts, manage the join code and interest list. |
 
@@ -113,7 +114,19 @@ A fixed list that every article tag must come from, so the filter stays consiste
   - Grey `#8F9091`, lines `#D3D3D3`
 - Green is too light for body text on white (contrast about 2.6:1). Use it for shapes, highlights and buttons with **black text on green**, not green text on white.
 - **Font:** tks.world uses PP Neue Montreal, which needs a paid licence for this kind of use. **(my call: a free lookalike such as Inter or Geist unless TKS can share its licence)**
-- **Components:** Sam's React Bits favourites (list pending). From the earlier review: Spotlight Card for article cards, Comet Dial for rating, Stepper for sign-up, Blur Text for headlines, Animated Content for scroll reveals, Kokonut Scroll Index for long articles.
+- **Components: Sam's React Bits favourites** (decided by Sam). The integration prompts with full source are in `React components/` in the old `TKS-newsletter` folder on Sam's PC. All are JavaScript + CSS variants, recoloured to TKS colours:
+
+  | Component | Where it goes | Needs |
+  |---|---|---|
+  | **Dither** | Homepage hero background | Canvas/WebGL, no library |
+  | **ASCII Text** | One or two words that need emphasis, such as the hero headline | Canvas/WebGL, no library |
+  | **Chroma Grid** | The feed: article cards built on the YouTube thumbnail, grey until hovered | none |
+  | **Animated Content** | Sections and cards revealing on scroll | `gsap` |
+  | **Comet Dial** | Rating an article 1–10 | `motion` |
+  | **Option Wheel** | Choosing which interest to view in the feed; also browsing interests during sign-up **(my guess)** | none |
+  | **Profile Card** | The member's Profile page | `@hugeicons/react` |
+
+  On phones, where there's no hover, Chroma Grid cards show in colour. **(my call)** Plain Tailwind covers everything else (forms, buttons, the article body).
 - Mobile first. Animations respect "reduce motion".
 
 ## Data (Supabase)
@@ -175,7 +188,6 @@ Row Level Security on everything. Members read published articles and their own 
 
 ## Still open (Sam's to answer)
 
-- Sam's React Bits favourites (pending; needed for the homepage phase only).
 - Site name and domain.
 
 ## Left to the builder
