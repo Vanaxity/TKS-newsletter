@@ -4,12 +4,22 @@ node_modules/
 # Next.js / Vercel
 .next/
 out/
+build/
 .vercel/
+next-env.d.ts
+*.tsbuildinfo
+
+# testing
+coverage/
 
 # secrets: never commit these
 .env
 .env.*
 !.env.example
+*.pem
+
+# plan execution scratch (superpowers)
+.superpowers/
 
 # misc
 .DS_Store
