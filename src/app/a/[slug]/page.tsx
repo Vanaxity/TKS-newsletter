@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { Markdown } from "@/components/markdown";
+import { ArticleActions } from "./article-actions";
 import { YouTubeEmbed } from "@/components/youtube-embed";
 import type { ArticleCard } from "@/lib/articles/feed";
 import { getArticle, getArticleMeta } from "@/lib/articles/queries";
@@ -41,6 +42,14 @@ async function ArticleBody({ params }: { params: PageProps<"/a/[slug]">["params"
         <>
           <YouTubeEmbed videoId={article.youtubeVideoId} title={result.article.videoTitle ?? article.headline} />
           <Markdown>{result.article.bodyMd}</Markdown>
+          <ArticleActions
+            articleId={result.article.id}
+            headline={article.headline}
+            repostCount={result.article.repostCount}
+            ratingAvg={result.article.ratingAvg}
+            ratingCount={result.article.ratingCount}
+            mine={result.article.mine}
+          />
           {result.article.videoTitle ? (
             <p className="text-sm text-tks-grey">
               Based on “{result.article.videoTitle}”{result.article.channelName ? ` by ${result.article.channelName}` : ""}.
