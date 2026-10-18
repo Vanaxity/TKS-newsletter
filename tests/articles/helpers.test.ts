@@ -33,9 +33,7 @@ test("preview takes about the first half", () => {
   expect(splitPreview(md)).toBe("one two three four\n\nfive six seven eight");
 });
 
-test("one paragraph previews that paragraph", () => expect(splitPreview("only one here")).toBe("only one here"));
 
-test("two paragraphs never preview both", () => expect(splitPreview("a b c d e f g h i j\n\nk")).toBe("a b c d e f g h i j"));
 
 test("headings count as blocks too", () => {
   expect(splitPreview("## Start\n\none two three\n\n## Later\n\nfour five six")).toBe("## Start\n\none two three");

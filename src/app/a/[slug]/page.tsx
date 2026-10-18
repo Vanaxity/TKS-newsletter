@@ -18,7 +18,8 @@ export async function generateMetadata({ params }: PageProps<"/a/[slug]">): Prom
 export default function ArticlePage({ params }: PageProps<"/a/[slug]">) {
   return (
     <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-8 px-4 py-10">
-      <Link href="/feed" className="text-sm font-semibold tracking-tight text-tks-black">
+      {/* The homepage sends members on to their feed, so this works for visitors from shared links too. */}
+      <Link href="/" className="text-sm font-semibold tracking-tight text-tks-black">
         TKS articles
       </Link>
       <Suspense fallback={<p className="text-tks-grey">Loading the article…</p>}>
@@ -35,7 +36,7 @@ async function ArticleBody({ params }: { params: PageProps<"/a/[slug]">["params"
 
   return (
     <article className="flex flex-col gap-6">
-      <Header article={article} />
+      <Header article={article} member={result.kind === "full"} />
       {result.kind === "full" ? (
         <>
           <YouTubeEmbed videoId={article.youtubeVideoId} title={result.article.videoTitle ?? article.headline} />
@@ -59,19 +60,21 @@ async function ArticleBody({ params }: { params: PageProps<"/a/[slug]">["params"
   );
 }
 
-function Header({ article }: { article: ArticleCard }) {
+function Header({ article, member }: { article: ArticleCard; member: boolean }) {
   return (
     <header className="flex flex-col gap-3">
       <div className="flex flex-wrap items-center gap-2 text-sm">
-        {article.tags.map((t) => (
-          <Link
-            key={t}
-            href={`/feed?topic=${t}`}
-            className="rounded-full bg-tks-green px-3 py-1 font-medium text-tks-black"
-          >
-            {LABELS.get(t) ?? t}
-          </Link>
-        ))}
+        {article.tags.map((t) =>
+          member ? (
+            <Link key={t} href={`/feed?topic=${t}`} className="rounded-full bg-tks-green px-3 py-1 font-medium text-tks-black">
+              {LABELS.get(t) ?? t}
+            </Link>
+          ) : (
+            <span key={t} className="rounded-full bg-tks-green px-3 py-1 font-medium text-tks-black">
+              {LABELS.get(t) ?? t}
+            </span>
+          ),
+        )}
         <span className="text-tks-grey">{article.readMinutes} min read</span>
       </div>
       <h1 className="text-4xl font-semibold tracking-tight text-tks-black sm:text-5xl">{article.headline}</h1>
