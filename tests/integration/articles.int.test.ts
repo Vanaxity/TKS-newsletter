@@ -69,3 +69,10 @@ test("members can't write articles", async () => {
   });
   expect(error).not.toBeNull();
 });
+
+test("members can't see who shared a video", async () => {
+  const m = await member();
+  const direct = await m.from("articles").select("shared_by_slack_id").eq("slug", PUBLISHED);
+  expect(direct.error).not.toBeNull();
+  expect((await m.from("article_submitters").select("*")).data ?? []).toEqual([]);
+});
