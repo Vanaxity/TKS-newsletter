@@ -1,13 +1,11 @@
-"use client";
+import { SpecularButton } from "@/components/react-bits/specular-button";
 
-import { useRouter } from "next/navigation";
-import { SpecularButton } from "@/components/react-bits/typed-home";
-
-// The hero's main call to action: React Bits Specular Button, lit in TKS green.
+// The hero's main call to action: React Bits Specular Button, lit in TKS green. A real link, so it works
+// before JavaScript loads and can open in a new tab.
 export function JoinButton() {
-  const router = useRouter();
   return (
     <SpecularButton
+      href="/signup"
       size="lg"
       radius={999}
       tint="#51B04C"
@@ -19,7 +17,6 @@ export function JoinButton() {
       idleIntensity={0.45}
       glow={1}
       autoAnimate
-      onClick={() => router.push("/signup")}
     >
       Join with your TKS code
     </SpecularButton>

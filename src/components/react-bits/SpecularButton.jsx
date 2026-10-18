@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import Link from 'next/link';
 
 import './SpecularButton.css';
 
@@ -430,11 +431,14 @@ const SpecularButton = ({
     wakeRef.current?.();
   });
 
+  // TKS change: with an href it renders a real link (works before JavaScript loads, opens in a new tab).
+  const Root = rest.href ? Link : 'button';
+  const buttonOnly = rest.href ? {} : { type, disabled };
+
   return (
-    <button
+    <Root
       ref={buttonRef}
-      type={type}
-      disabled={disabled}
+      {...buttonOnly}
       onClick={onClick}
       className={`specular-button specular-button--${size}${className ? ` ${className}` : ''}`}
       style={{
@@ -449,7 +453,7 @@ const SpecularButton = ({
     >
       <canvas ref={canvasRef} className="specular-button__light" aria-hidden="true" />
       <span className="specular-button__label">{children}</span>
-    </button>
+    </Root>
   );
 };
 

@@ -1,11 +1,6 @@
-// Typed handles for the homepage's React Bits effects. Kept apart from typed.ts so other pages
-// don't pull in the WebGL code.
-import type { ComponentType, CSSProperties, MouseEventHandler, ReactNode, RefObject } from "react";
-import AnimatedContentJs from "./AnimatedContent";
-import ASCIITextJs from "./ASCIIText";
-import DitherJs from "./Dither";
-import LaserFlowJs from "./LaserFlow";
-import SpecularButtonJs from "./SpecularButton";
+// Prop types for the homepage's React Bits components. Types only: importing this file adds no code,
+// so pages pull in just the components they actually render.
+import type { CSSProperties, MouseEventHandler, ReactNode, RefObject } from "react";
 
 export type DitherProps = {
   waveColor?: string | [number, number, number];
@@ -103,7 +98,9 @@ export type SpecularButtonProps = {
   autoAnimate?: boolean;
   speed?: number;
   disabled?: boolean;
-  onClick?: MouseEventHandler<HTMLButtonElement>;
+  onClick?: MouseEventHandler<HTMLElement>;
+  /** TKS change: renders a link instead of a button. */
+  href?: string;
   type?: "button" | "submit" | "reset";
   className?: string;
   style?: CSSProperties;
@@ -126,10 +123,5 @@ export type AnimatedContentProps = {
   trigger?: "scroll" | "mount";
   once?: boolean;
   className?: string;
+  style?: CSSProperties;
 };
-
-export const Dither = DitherJs as unknown as ComponentType<DitherProps>;
-export const LaserFlow = LaserFlowJs as unknown as ComponentType<LaserFlowProps>;
-export const ASCIIText = ASCIITextJs as unknown as ComponentType<ASCIITextProps>;
-export const SpecularButton = SpecularButtonJs as unknown as ComponentType<SpecularButtonProps>;
-export const AnimatedContent = AnimatedContentJs as unknown as ComponentType<AnimatedContentProps>;

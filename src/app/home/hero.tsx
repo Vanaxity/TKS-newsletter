@@ -53,7 +53,7 @@ export function Hero({ nav, actions }: { nav: ReactNode; actions: ReactNode }) {
           mouseEffect="reveal"
           mouseRadius={0.35}
           disableAnimation={reduced || !inView}
-          dpr={small ? 1 : 2}
+          dpr={small ? 1 : undefined}
         />
         <div className="absolute inset-0 bg-gradient-to-b from-[#0b0c0d]/10 via-[#0b0c0d]/40 to-[#0b0c0d]" />
       </div>
@@ -86,7 +86,7 @@ export function Hero({ nav, actions }: { nav: ReactNode; actions: ReactNode }) {
             For TKS students
           </p>
           <h1 className="text-4xl font-semibold leading-tight tracking-tight sm:text-6xl">The coolest videos in TKS,</h1>
-          <div className="relative my-3 h-24 w-full sm:h-44" aria-label="this is cool">
+          <div className={`relative my-3 w-full ${rich ? "h-24 sm:h-44" : ""}`}>
             {rich ? (
               <ASCIIText
                 text="this is cool"
