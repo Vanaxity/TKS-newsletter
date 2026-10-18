@@ -1,5 +1,7 @@
 import "server-only";
+import { connection } from "next/server";
 import { getViewer, type Viewer } from "@/lib/auth/viewer";
+import { createPublicClient } from "@/lib/supabase/public";
 import { INTEREST_SLUGS } from "@/lib/interests";
 import { createServerSupabase } from "@/lib/supabase/server";
 import { composeFeed, type ArticleCard, type FeedItem } from "./feed";
@@ -86,8 +88,8 @@ export async function getArticle(
 
 // Headline and subtitle for link previews; never more than the public half has.
 export async function getArticleMeta(slug: string): Promise<{ headline: string; dek: string } | null> {
-  const supabase = await createServerSupabase();
-  const { data } = await supabase.rpc("public_article", { p_slug: slug });
+  await connection(); // the Supabase client reads the clock; wait for the real request (see getViewer)
+  const { data } = await createPublicClient().rpc("public_article", { p_slug: slug });
   const row = (data as { headline: string; dek: string }[] | null)?.[0];
   return row ? { headline: row.headline, dek: row.dek } : null;
 }
