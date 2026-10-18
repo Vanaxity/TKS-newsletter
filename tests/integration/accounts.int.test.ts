@@ -1,5 +1,5 @@
 // Runs against the real Supabase project: `TEST_JOIN_CODE=<code> npm run test:int`.
-// Test users are int-*@tks-articles.test; delete them afterwards (see the phase 2 plan).
+// Test users are tks-int-*@mailinator.com; delete them afterwards (see the phase 2 plan).
 import { randomUUID } from "node:crypto";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
@@ -15,7 +15,7 @@ const CODE = process.env.TEST_JOIN_CODE!;
 const PASSWORD = "correct-horse-9";
 
 const anon = () => createClient(URL_, KEY, { auth: { persistSession: false, autoRefreshToken: false } });
-const email = () => `int-${randomUUID().slice(0, 8)}@tks-articles.test`;
+const email = () => `tks-int-${randomUUID().slice(0, 8)}@mailinator.com`; // public throwaway inbox; .test is rejected
 
 async function member(): Promise<{ client: SupabaseClient; id: string }> {
   const client = anon();
@@ -86,6 +86,24 @@ test("a username taken in another case is refused by the database", async () => 
   expect((await a.client.from("profiles").update({ ...profile, username: name }).eq("id", a.id)).error).toBeNull();
   const clash = await b.client.from("profiles").update({ ...profile, username: name }).eq("id", b.id);
   expect(clash.error?.code).toBe("23505");
+});
+
+test("a member can store only their one avatar file", async () => {
+  const a = await member();
+  const png = new Blob([new Uint8Array([137, 80, 78, 71])], { type: "image/webp" });
+  const own = await a.client.storage.from("avatars").upload(`${a.id}/avatar.webp`, png, { upsert: true, contentType: "image/webp" });
+  expect(own.error).toBeNull();
+  const extra = await a.client.storage.from("avatars").upload(`${a.id}/movie.webp`, png, { contentType: "image/webp" });
+  expect(extra.error).not.toBeNull();
+});
+
+test("a member cannot point their avatar at someone else's photo", async () => {
+  const a = await member();
+  const b = await member();
+  const steal = await a.client.from("profiles").update({ avatar_path: `${b.id}/avatar.webp` }).eq("id", a.id);
+  expect(steal.error).not.toBeNull();
+  const own = await a.client.from("profiles").update({ avatar_path: `${a.id}/avatar.webp` }).eq("id", a.id);
+  expect(own.error).toBeNull();
 });
 
 test("a member can only write their own interests", async () => {
