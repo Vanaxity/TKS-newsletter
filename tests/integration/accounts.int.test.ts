@@ -78,6 +78,16 @@ test("cohorts and interests are readable", async () => {
   expect(count).toBe(15);
 });
 
+test("a username taken in another case is refused by the database", async () => {
+  const name = `int_${randomUUID().slice(0, 8)}`;
+  const profile = { first_name: "Int", last_name: "Test", cohort_id: 1, city: "Testville", onboarding_step: "interests" };
+  const a = await member();
+  const b = await member();
+  expect((await a.client.from("profiles").update({ ...profile, username: name }).eq("id", a.id)).error).toBeNull();
+  const clash = await b.client.from("profiles").update({ ...profile, username: name }).eq("id", b.id);
+  expect(clash.error?.code).toBe("23505");
+});
+
 test("a member can only write their own interests", async () => {
   const a = await member();
   const b = await member();

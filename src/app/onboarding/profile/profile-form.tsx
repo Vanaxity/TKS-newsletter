@@ -1,0 +1,109 @@
+"use client";
+
+import { useActionState, useState } from "react";
+import { SubmitButton } from "@/components/ui/button";
+import { Field, FormError } from "@/components/ui/field";
+import type { FormState } from "@/lib/auth/schemas";
+import { saveProfile } from "./actions";
+import { AvatarPicker } from "./avatar-picker";
+
+export type Cohort = { id: number; name: string; type: "global" | "in_person" };
+
+type Props = {
+  userId: string;
+  cohorts: Cohort[];
+  avatarUrl: string | null;
+  initialInitials: string;
+  defaults: {
+    username: string;
+    firstName: string;
+    lastName: string;
+    city: string;
+    cohortId: number | null;
+    avatarPath: string | null;
+  };
+};
+
+export function ProfileForm({ userId, cohorts, avatarUrl, initialInitials, defaults }: Props) {
+  const [state, action] = useActionState<FormState, FormData>(saveProfile, {});
+  const e = state.fieldErrors ?? {};
+  const startType = cohorts.find((c) => c.id === defaults.cohortId)?.type ?? null;
+  const [cohortType, setCohortType] = useState<Cohort["type"] | null>(startType);
+  const options = cohorts.filter((c) => c.type === cohortType);
+
+  return (
+    <form action={action} className="flex flex-col gap-5" noValidate>
+      <AvatarPicker
+        userId={userId}
+        initialUrl={avatarUrl}
+        initialPath={defaults.avatarPath}
+        fallbackInitials={initialInitials}
+      />
+      <Field
+        label="Username"
+        name="username"
+        autoComplete="username"
+        defaultValue={defaults.username}
+        hint="Lowercase letters, numbers or _. This is your profile address."
+        error={e.username}
+        required
+      />
+      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+        <Field label="First name" name="firstName" autoComplete="given-name" defaultValue={defaults.firstName} error={e.firstName} required />
+        <Field label="Last name" name="lastName" autoComplete="family-name" defaultValue={defaults.lastName} error={e.lastName} required />
+      </div>
+
+      <fieldset className="flex flex-col gap-2">
+        <legend className="mb-1.5 text-sm font-medium text-tks-black">Which cohort are you from?</legend>
+        <div className="grid grid-cols-2 gap-3">
+          {(
+            [
+              ["global", "Global"],
+              ["in_person", "In-person"],
+            ] as const
+          ).map(([value, label]) => (
+            <label
+              key={value}
+              className={`cursor-pointer rounded-xl border px-4 py-3 text-center text-sm font-medium transition ${
+                cohortType === value ? "border-tks-black bg-tks-green text-tks-black" : "border-tks-line bg-tks-white text-tks-black"
+              }`}
+            >
+              <input
+                type="radio"
+                name="cohortType"
+                value={value}
+                checked={cohortType === value}
+                onChange={() => setCohortType(value)}
+                className="sr-only"
+              />
+              {label}
+            </label>
+          ))}
+        </div>
+        {cohortType ? (
+          <select
+            name="cohortId"
+            aria-label="Cohort"
+            defaultValue={startType === cohortType && defaults.cohortId ? String(defaults.cohortId) : ""}
+            key={cohortType}
+            className={`mt-1 rounded-xl border bg-tks-white px-4 py-3 text-base text-tks-black ${e.cohortId ? "border-red-600" : "border-tks-line"}`}
+          >
+            <option value="" disabled>
+              Pick your cohort
+            </option>
+            {options.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.name}
+              </option>
+            ))}
+          </select>
+        ) : null}
+        {e.cohortId || e.cohortType ? <p className="text-sm text-red-700">{e.cohortId ?? e.cohortType}</p> : null}
+      </fieldset>
+
+      <Field label="City" name="city" autoComplete="address-level2" defaultValue={defaults.city} error={e.city} required />
+      <FormError message={state.error} />
+      <SubmitButton pendingText="Saving…">Next: pick your interests</SubmitButton>
+    </form>
+  );
+}
