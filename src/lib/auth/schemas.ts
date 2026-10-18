@@ -4,7 +4,13 @@ import { INTEREST_SLUGS } from "@/lib/interests";
 export const USERNAME_RE = /^[a-z0-9_]{3,20}$/;
 const AVATAR_PATH_RE = /^([0-9a-f-]{36}\/avatar\.webp)?$/;
 
-export type FormState = { error?: string; fieldErrors?: Record<string, string> };
+// `values` echoes what was typed, so React's reset after a failed submit puts it back instead of blanking the form.
+export type FormState = { error?: string; fieldErrors?: Record<string, string>; values?: Record<string, string> };
+
+// The named fields from a submitted form, as strings. Only list fields that are safe to send back (never passwords).
+export function submittedValues(formData: FormData, fields: string[]): Record<string, string> {
+  return Object.fromEntries(fields.map((f) => [f, String(formData.get(f) ?? "")]));
+}
 
 // A required, trimmed text field with one message for every way it can be wrong.
 const text = (message: string, max: number) =>

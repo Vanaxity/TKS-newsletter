@@ -10,9 +10,10 @@ import { login } from "./actions";
 export function LoginForm() {
   const [state, action] = useActionState<FormState, FormData>(login, {});
   const e = state.fieldErrors ?? {};
+  const v = state.values ?? {};
   return (
     <form action={action} className="flex flex-col gap-5" noValidate>
-      <Field label="Email" name="email" type="email" autoComplete="email" required error={e.email} />
+      <Field label="Email" name="email" type="email" autoComplete="email" required defaultValue={v.email} error={e.email} />
       <Field label="Password" name="password" type="password" autoComplete="current-password" required error={e.password} />
       <FormError message={state.error} />
       <SubmitButton pendingText="Logging in…">Log in</SubmitButton>

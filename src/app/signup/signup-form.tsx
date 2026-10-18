@@ -10,9 +10,10 @@ import { signup } from "./actions";
 export function SignupForm() {
   const [state, action] = useActionState<FormState, FormData>(signup, {});
   const e = state.fieldErrors ?? {};
+  const v = state.values ?? {};
   return (
     <form action={action} className="flex flex-col gap-5" noValidate>
-      <Field label="Email" name="email" type="email" autoComplete="email" required error={e.email} />
+      <Field label="Email" name="email" type="email" autoComplete="email" required defaultValue={v.email} error={e.email} />
       <Field
         label="Password"
         name="password"
@@ -28,6 +29,7 @@ export function SignupForm() {
         name="joinCode"
         autoComplete="off"
         required
+        defaultValue={v.joinCode}
         hint="It's pinned in TKS Slack"
         error={e.joinCode}
       />

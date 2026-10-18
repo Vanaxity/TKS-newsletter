@@ -12,3 +12,9 @@ test.each([
 ])("%s → friendly message", (code, message, expected) => {
   expect(authErrorMessage(code, message)).toBe(expected);
 });
+
+test("an unconfirmed email gets a clear message", () => {
+  expect(authErrorMessage("email_not_confirmed", "Email not confirmed")).toBe(
+    "This account still needs its email confirmed. Ask a TKS director for help.",
+  );
+});
