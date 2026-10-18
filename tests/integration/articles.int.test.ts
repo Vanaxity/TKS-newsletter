@@ -76,3 +76,17 @@ test("members can't see who shared a video", async () => {
   expect(direct.error).not.toBeNull();
   expect((await m.from("article_submitters").select("*")).data ?? []).toEqual([]);
 });
+
+test("latest_articles gives anyone the newest published headlines, never drafts or bodies", async () => {
+  const { data, error } = await anon().rpc("latest_articles", { p_limit: 3 });
+  expect(error).toBeNull();
+  expect(data!.length).toBeLessThanOrEqual(3);
+  const slugs = data!.map((r: { slug: string }) => r.slug);
+  expect(slugs).not.toContain(DRAFT);
+  for (const row of data!) {
+    expect(Object.keys(row)).not.toContain("body_md");
+    expect(Object.keys(row)).not.toContain("preview_md");
+  }
+  const dates = data!.map((r: { published_at: string }) => Date.parse(r.published_at));
+  expect([...dates].sort((a, b) => b - a)).toEqual(dates);
+});

@@ -195,3 +195,10 @@ export async function getProfile(username: string): Promise<{ profile: PublicPro
     reposts: await cardsInOrder((reposts ?? []).map((r) => r.article_id as number)),
   };
 }
+
+// The newest published articles for the homepage. Public: same fields a shared link shows.
+export async function getLatest(limit = 6): Promise<FeedItem[]> {
+  await connection(); // the Supabase client reads the clock; wait for the real request (see getViewer)
+  const { data } = await createPublicClient().rpc("latest_articles", { p_limit: limit });
+  return ((data as CardRow[] | null) ?? []).map((r) => ({ article: toCard(r), outside: false }));
+}
