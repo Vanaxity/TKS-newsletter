@@ -7,6 +7,7 @@ import { Fresh } from "./home/fresh";
 import { Hero } from "./home/hero";
 import { HowItWorks } from "./home/how-it-works";
 import { JoinButton } from "./home/join-button";
+import { Reveal } from "./home/reveal";
 
 const ghost =
   "rounded-full border border-white/30 px-6 py-3 font-semibold text-tks-white transition hover:border-white hover:bg-white/10";
@@ -85,15 +86,17 @@ async function HeroActions() {
 function Interests() {
   return (
     <section className="mx-auto w-full max-w-6xl px-4 py-16">
-      <h2 className="text-3xl font-semibold tracking-tight text-ink sm:text-4xl">Whatever you&apos;re into</h2>
-      <p className="mt-2 text-muted">Pick as many as you like when you join. Change them any time.</p>
-      <div className="mt-8 flex flex-wrap gap-2">
+      <Reveal preset="heading">
+        <h2 className="text-3xl font-semibold tracking-tight text-ink sm:text-4xl">Whatever you&apos;re into</h2>
+        <p className="mt-2 text-muted">Pick as many as you like when you join. Change them any time.</p>
+      </Reveal>
+      <Reveal preset="chips" className="mt-8 flex flex-wrap gap-2">
         {INTERESTS.map((i) => (
           <span key={i.slug} className="rounded-full border border-line bg-card px-4 py-2 text-sm font-medium text-ink">
             {i.label}
           </span>
         ))}
-      </div>
+      </Reveal>
     </section>
   );
 }

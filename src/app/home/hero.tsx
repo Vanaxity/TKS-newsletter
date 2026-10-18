@@ -42,20 +42,23 @@ export function Hero({ nav, actions }: { nav: ReactNode; actions: ReactNode }) {
       />
       <div aria-hidden className="absolute inset-0 -z-10">
         <Dither
-          waveColor="#2c5f29"
+          waveColor="#7fd27a"
           backgroundColor="#0b0c0d"
           ditherMode="bayer"
           colorNum={4}
-          pixelSize={2}
-          waveSpeed={0.04}
+          pixelSize={3}
+          waveSpeed={0.05}
           waveFrequency={3}
-          waveAmplitude={0.3}
+          waveAmplitude={0.4}
+          contrast={1.5}
+          brightness={0.12}
           mouseEffect="reveal"
-          mouseRadius={0.35}
+          mouseRadius={0.4}
           disableAnimation={reduced || !inView}
           dpr={small ? 1 : undefined}
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#0b0c0d]/10 via-[#0b0c0d]/40 to-[#0b0c0d]" />
+        {/* Only fade the bottom edge into the page, so the dithered waves stay visible. */}
+        <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-b from-transparent to-[#0b0c0d]" />
       </div>
       {rich ? (
         <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
@@ -63,12 +66,12 @@ export function Hero({ nav, actions }: { nav: ReactNode; actions: ReactNode }) {
             surfaceRef={cardRef}
             beamPosition={0.62}
             color={GREEN}
-            intensity={1.6}
-            flare={1.4}
-            spread={1.4}
-            spill={1}
-            fog={0.18}
-            dust={1.4}
+            intensity={1.15}
+            flare={1.2}
+            spread={1.2}
+            spill={0.8}
+            fog={0.08}
+            dust={1.2}
             mouseInteraction
             paused={!inView}
           />
@@ -80,7 +83,7 @@ export function Hero({ nav, actions }: { nav: ReactNode; actions: ReactNode }) {
       <div className="mx-auto flex w-full max-w-5xl flex-1 items-end px-4 pb-16 pt-[24vh] sm:pb-24">
         <div
           ref={cardRef}
-          className="relative w-full rounded-3xl border border-white/10 bg-black/45 p-6 shadow-2xl backdrop-blur-md sm:p-10"
+          className="relative w-full rounded-3xl border border-white/10 bg-black/35 p-6 shadow-2xl backdrop-blur-[3px] sm:p-10"
         >
           <p className="mb-4 inline-flex rounded-full border border-tks-green/40 bg-tks-green/10 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-tks-green">
             For TKS students

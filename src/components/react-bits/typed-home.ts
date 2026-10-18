@@ -120,6 +120,9 @@ export type AnimatedContentProps = {
   threshold?: number;
   delay?: number;
   stagger?: number;
+  staggerFrom?: "start" | "end" | "center" | "edges" | "random";
+  rotate?: number;
+  tilt?: number;
   trigger?: "scroll" | "mount";
   once?: boolean;
   className?: string;
