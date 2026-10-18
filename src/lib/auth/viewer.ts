@@ -1,5 +1,6 @@
 import "server-only";
 import { redirect } from "next/navigation";
+import { connection } from "next/server";
 import { createServerSupabase } from "@/lib/supabase/server";
 import { pathForStep, type OnboardingStep } from "./steps";
 
@@ -20,6 +21,9 @@ export type Viewer = {
 
 // The signed-in member and their profile, or null. Reads cookies, so call it inside <Suspense>.
 export async function getViewer(): Promise<Viewer | null> {
+  // Supabase checks the token's expiry against the clock, which Next.js won't allow while prefetching a
+  // page ahead of time. Wait for the real request instead.
+  await connection();
   const supabase = await createServerSupabase();
   const { data } = await supabase.auth.getClaims();
   const claims = data?.claims;
