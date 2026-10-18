@@ -14,6 +14,8 @@ const eslintConfig = defineConfig([
     "next-env.d.ts",
     // Vendored React Bits components, kept as published.
     "src/components/react-bits/**",
+    // Local plan-execution scratch (git-ignored).
+    ".superpowers/**",
   ]),
 ]);
 
