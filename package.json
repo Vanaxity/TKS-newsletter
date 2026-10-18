@@ -10,7 +10,8 @@
     "typecheck": "next typegen && tsc --noEmit",
     "test": "vitest run --passWithNoTests",
     "summarise": "tsx scripts/summarise.ts",
-    "test:int": "vitest run --config vitest.integration.config.ts"
+    "test:int": "vitest run --config vitest.integration.config.ts",
+    "draft-article": "tsx scripts/draft-article.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",
@@ -18,6 +19,8 @@
     "next": "16.4.2",
     "react": "19.3.0",
     "react-dom": "19.3.0",
+    "react-markdown": "^10.1.0",
+    "remark-gfm": "^4.0.1",
     "server-only": "^0.0.1",
     "zod": "^4.6.7"
   },

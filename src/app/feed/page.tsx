@@ -2,6 +2,8 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { logout } from "@/app/actions/logout";
 import { Avatar } from "@/components/avatar";
+import { FeedGrid } from "@/components/feed-grid";
+import { getFeed } from "@/lib/articles/queries";
 import { avatarSignedUrl } from "@/lib/avatar-url";
 import { requireStep } from "@/lib/auth/viewer";
 import { INTERESTS } from "@/lib/interests";
@@ -9,9 +11,9 @@ import { createServerSupabase } from "@/lib/supabase/server";
 
 export const metadata = { title: "Your feed · TKS articles" };
 
-export default function FeedPage() {
+export default function FeedPage({ searchParams }: PageProps<"/feed">) {
   return (
-    <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-8 px-4 py-12">
+    <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-8 px-4 py-10">
       <header className="flex items-center justify-between">
         <Link href="/" className="text-sm font-semibold tracking-tight text-tks-black">
           TKS articles
@@ -23,50 +25,75 @@ export default function FeedPage() {
         </form>
       </header>
       <Suspense fallback={<p className="text-tks-grey">Loading your feed…</p>}>
-        <Welcome />
+        <Feed searchParams={searchParams} />
       </Suspense>
     </main>
   );
 }
 
-async function Welcome() {
+async function Feed({ searchParams }: { searchParams: PageProps<"/feed">["searchParams"] }) {
   const viewer = await requireStep("done");
+  const { topic } = await searchParams;
+  const activeTopic = typeof topic === "string" ? topic : undefined;
+
   const supabase = await createServerSupabase();
-  const [{ data: cohort }, { data: picked }, avatarUrl] = await Promise.all([
-    supabase.from("cohorts").select("name").eq("id", viewer.profile.cohortId ?? 0).maybeSingle(),
+  const [{ data: picked }, avatarUrl, items] = await Promise.all([
     supabase.from("profile_interests").select("interest_slug").eq("profile_id", viewer.id),
     avatarSignedUrl(supabase, viewer.profile.avatarPath),
+    getFeed(viewer, { topic: activeTopic }),
   ]);
-  const slugs = new Set((picked ?? []).map((r) => r.interest_slug));
+  const mine = new Set((picked ?? []).map((r) => r.interest_slug as string));
+  const topics = INTERESTS.filter((i) => mine.has(i.slug));
   const p = viewer.profile;
 
   return (
-    <section className="flex flex-col gap-6 rounded-3xl bg-tks-white p-6 sm:p-8">
-      <div className="flex items-center gap-4">
-        <Avatar url={avatarUrl} firstName={p.firstName} lastName={p.lastName} />
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight text-tks-black">Hi {p.firstName}</h1>
-          <p className="text-tks-grey">
-            @{p.username} · {cohort?.name ?? "Cohort"} · {p.city}
-          </p>
+    <div className="flex flex-col gap-8">
+      <section className="flex flex-wrap items-center justify-between gap-4">
+        <div className="flex items-center gap-4">
+          <Avatar url={avatarUrl} firstName={p.firstName} lastName={p.lastName} size={56} />
+          <div>
+            <h1 className="text-3xl font-semibold tracking-tight text-tks-black">Hi {p.firstName}</h1>
+            <p className="text-tks-grey">Articles picked for what you&apos;re into.</p>
+          </div>
         </div>
-      </div>
-      <div className="flex flex-wrap gap-2">
-        {INTERESTS.filter((i) => slugs.has(i.slug)).map((i) => (
-          <span key={i.slug} className="rounded-full bg-tks-green px-3 py-1 text-sm font-medium text-tks-black">
-            {i.label}
-          </span>
+        <div className="flex gap-4 text-sm">
+          <Link href="/onboarding/profile" className="font-medium text-tks-black underline underline-offset-4">
+            Edit profile
+          </Link>
+          <Link href="/onboarding/interests" className="font-medium text-tks-black underline underline-offset-4">
+            Edit interests
+          </Link>
+        </div>
+      </section>
+
+      <nav aria-label="Filter by interest" className="flex flex-wrap gap-2">
+        <TopicChip href="/feed" label="All" active={!activeTopic} />
+        {topics.map((t) => (
+          <TopicChip key={t.slug} href={`/feed?topic=${t.slug}`} label={t.label} active={activeTopic === t.slug} />
         ))}
-      </div>
-      <p className="text-tks-black">Your feed is coming soon: articles from #r-thisiscool about the things you picked.</p>
-      <div className="flex gap-4 text-sm">
-        <Link href="/onboarding/profile" className="font-medium text-tks-black underline underline-offset-4">
-          Edit profile
-        </Link>
-        <Link href="/onboarding/interests" className="font-medium text-tks-black underline underline-offset-4">
-          Edit interests
-        </Link>
-      </div>
-    </section>
+      </nav>
+
+      {items.length ? (
+        <FeedGrid items={items} />
+      ) : (
+        <p className="rounded-3xl bg-tks-white p-8 text-tks-black">
+          No articles here yet. New ones appear as soon as they&apos;re approved.
+        </p>
+      )}
+    </div>
+  );
+}
+
+function TopicChip({ href, label, active }: { href: string; label: string; active: boolean }) {
+  return (
+    <Link
+      href={href}
+      aria-current={active ? "page" : undefined}
+      className={`rounded-full border px-4 py-2 text-sm font-medium transition ${
+        active ? "border-tks-green bg-tks-green text-tks-black" : "border-tks-line bg-tks-white text-tks-black hover:border-tks-black"
+      }`}
+    >
+      {label}
+    </Link>
   );
 }
