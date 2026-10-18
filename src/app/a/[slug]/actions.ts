@@ -1,5 +1,6 @@
 "use server";
 
+import { saveRating } from "@/lib/articles/rating";
 import { getViewer } from "@/lib/auth/viewer";
 import { createServerSupabase } from "@/lib/supabase/server";
 
@@ -9,11 +10,7 @@ const validId = (id: unknown): id is number => Number.isInteger(id) && (id as nu
 export async function rateArticle(articleId: number, score: number): Promise<{ ok: boolean }> {
   const viewer = await getViewer();
   if (!viewer || !validId(articleId) || !Number.isInteger(score) || score < 1 || score > 10) return { ok: false };
-  const supabase = await createServerSupabase();
-  const { error } = await supabase
-    .from("ratings")
-    .upsert({ user_id: viewer.id, article_id: articleId, score, updated_at: new Date().toISOString() }, { onConflict: "user_id,article_id" });
-  return { ok: !error };
+  return { ok: await saveRating(await createServerSupabase(), viewer.id, articleId, score) };
 }
 
 export async function toggleSave(articleId: number): Promise<{ saved: boolean } | null> {

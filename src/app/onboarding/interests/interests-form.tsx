@@ -32,7 +32,7 @@ export function InterestsForm({ initial, finishedBefore }: { initial: string[]; 
               <label
                 key={slug}
                 className={`cursor-pointer select-none rounded-full border px-4 py-2 text-sm font-medium transition ${
-                  on ? "border-tks-green bg-tks-green text-on-green" : "border-line bg-card text-on-green hover:border-ink"
+                  on ? "border-tks-green bg-tks-green text-on-green" : "border-line bg-card text-ink hover:border-ink"
                 }`}
               >
                 <input type="checkbox" name="interests" value={slug} checked={on} onChange={() => toggle(slug)} className="sr-only" />

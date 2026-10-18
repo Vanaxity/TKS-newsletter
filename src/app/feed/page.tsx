@@ -81,7 +81,7 @@ function TopicChip({ href, label, active }: { href: string; label: string; activ
       href={href}
       aria-current={active ? "page" : undefined}
       className={`rounded-full border px-4 py-2 text-sm font-medium transition ${
-        active ? "border-tks-green bg-tks-green text-on-green" : "border-line bg-card text-on-green hover:border-ink"
+        active ? "border-tks-green bg-tks-green text-on-green" : "border-line bg-card text-ink hover:border-ink"
       }`}
     >
       {label}

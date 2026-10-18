@@ -67,7 +67,7 @@ export function ProfileForm({ userId, cohorts, avatarUrl, initialInitials, defau
             <label
               key={value}
               className={`cursor-pointer rounded-xl border px-4 py-3 text-center text-sm font-medium transition ${
-                cohortType === value ? "border-ink bg-tks-green text-on-green" : "border-line bg-card text-on-green"
+                cohortType === value ? "border-ink bg-tks-green text-on-green" : "border-line bg-card text-ink"
               }`}
             >
               <input
