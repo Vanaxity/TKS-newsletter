@@ -16,3 +16,7 @@ test("initials", () => {
   expect(initials(null, null)).toBe("?");
   expect(initials("  ", "")).toBe("?");
 });
+
+test("initials keep an emoji whole instead of splitting it", () => {
+  expect(initials("🦊 Max", "Fox")).toBe("🦊F");
+});

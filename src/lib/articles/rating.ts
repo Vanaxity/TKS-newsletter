@@ -27,3 +27,9 @@ export async function saveRating(
   if (error.code === "23505") return !(await update()).error;
   return false;
 }
+
+// Removes a member's rating; the database trigger takes it back out of the article's average.
+export async function clearRating(supabase: SupabaseClient, userId: string, articleId: number): Promise<boolean> {
+  const { error } = await supabase.from("ratings").delete().eq("user_id", userId).eq("article_id", articleId);
+  return !error;
+}

@@ -26,7 +26,7 @@ export function Field({ label, name, error, hint, className, ...input }: FieldPr
         {...input}
       />
       {error ? (
-        <p id={`${id}-error`} className="text-sm text-red-700">
+        <p id={`${id}-error`} className="text-sm text-red-700 dark:text-red-400">
           {error}
         </p>
       ) : hint ? (
@@ -41,7 +41,7 @@ export function Field({ label, name, error, hint, className, ...input }: FieldPr
 export function FormError({ message }: { message?: string }) {
   if (!message) return null;
   return (
-    <p role="alert" className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-800">
+    <p role="alert" className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-800 dark:bg-red-950 dark:text-red-200">
       {message}
     </p>
   );

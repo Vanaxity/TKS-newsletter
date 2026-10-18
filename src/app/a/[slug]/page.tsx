@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { Markdown } from "@/components/markdown";
+import { SiteHeader } from "@/components/site-header";
 import { ArticleActions } from "./article-actions";
 import { YouTubeEmbed } from "@/components/youtube-embed";
 import type { ArticleCard } from "@/lib/articles/feed";
@@ -19,10 +20,6 @@ export async function generateMetadata({ params }: PageProps<"/a/[slug]">): Prom
 export default function ArticlePage({ params }: PageProps<"/a/[slug]">) {
   return (
     <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-8 px-4 py-10">
-      {/* The homepage sends members on to their feed, so this works for visitors from shared links too. */}
-      <Link href="/" className="text-sm font-semibold tracking-tight text-ink">
-        TKS articles
-      </Link>
       <Suspense fallback={<p className="text-muted">Loading the article…</p>}>
         <ArticleBody params={params} />
       </Suspense>
@@ -37,6 +34,14 @@ async function ArticleBody({ params }: { params: PageProps<"/a/[slug]">["params"
 
   return (
     <article className="flex flex-col gap-6">
+      {result.kind === "full" ? (
+        <SiteHeader />
+      ) : (
+        // The homepage sends members on to their feed, so this works for visitors from shared links too.
+        <Link href="/" className="text-sm font-semibold tracking-tight text-ink">
+          TKS articles
+        </Link>
+      )}
       <Header article={article} member={result.kind === "full"} />
       {result.kind === "full" ? (
         <>

@@ -41,7 +41,7 @@ export function InterestsForm({ initial, finishedBefore }: { initial: string[]; 
             );
           })}
         </div>
-        {state.fieldErrors?.interests ? <p className="mt-3 text-sm text-red-700">{state.fieldErrors.interests}</p> : null}
+        {state.fieldErrors?.interests ? <p className="mt-3 text-sm text-red-700 dark:text-red-400">{state.fieldErrors.interests}</p> : null}
       </fieldset>
       <FormError message={state.error} />
       <div className="flex items-center justify-between gap-3">

@@ -100,7 +100,7 @@ export function ProfileForm({ userId, cohorts, avatarUrl, initialInitials, defau
             ))}
           </select>
         ) : null}
-        {e.cohortId || e.cohortType ? <p className="text-sm text-red-700">{e.cohortId ?? e.cohortType}</p> : null}
+        {e.cohortId || e.cohortType ? <p className="text-sm text-red-700 dark:text-red-400">{e.cohortId ?? e.cohortType}</p> : null}
       </fieldset>
 
       <Field label="City" name="city" autoComplete="address-level2" defaultValue={v.city} error={e.city} required />

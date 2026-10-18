@@ -2,7 +2,7 @@
 // Needs the fixture article "int-fixture-actions-dddddd" (see the phase 4 plan, Task 1).
 import { randomUUID } from "node:crypto";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
-import { saveRating } from "@/lib/articles/rating";
+import { clearRating, saveRating } from "@/lib/articles/rating";
 
 try {
   process.loadEnvFile(".env.local");
@@ -107,4 +107,14 @@ test("saveRating (what the Rate action uses) creates, then changes, one rating",
   expect(await saveRating(a.c, a.id, id, 9)).toBe(true);
   expect((await a.c.from("ratings").select("score").eq("article_id", id).eq("user_id", a.id)).data).toEqual([{ score: 9 }]);
   expect(await counters(a.c)).toMatchObject({ rating_count: start!.rating_count + 1, rating_sum: start!.rating_sum + 9 });
+});
+
+test("clearRating removes the member's rating and restores the counters", async () => {
+  const a = await member();
+  const id = await articleId(a.c);
+  const start = await counters(a.c);
+  expect(await saveRating(a.c, a.id, id, 7)).toBe(true);
+  expect(await clearRating(a.c, a.id, id)).toBe(true);
+  expect((await a.c.from("ratings").select("score").eq("article_id", id).eq("user_id", a.id)).data).toEqual([]);
+  expect(await counters(a.c)).toMatchObject({ rating_count: start!.rating_count, rating_sum: start!.rating_sum });
 });

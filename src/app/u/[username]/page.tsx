@@ -3,7 +3,7 @@ import { Suspense } from "react";
 import { FeedGrid } from "@/components/feed-grid";
 import { SiteHeader } from "@/components/site-header";
 import { getProfile } from "@/lib/articles/queries";
-import { initials } from "@/lib/avatar";
+import { initials, initialsImageUrl } from "@/lib/avatar";
 import { avatarSignedUrl } from "@/lib/avatar-url";
 import { requireStep } from "@/lib/auth/viewer";
 import { INTERESTS } from "@/lib/interests";
@@ -25,12 +25,6 @@ export default function ProfilePage({ params }: PageProps<"/u/[username]">) {
   );
 }
 
-// A green square with the member's initials, for the card when they have no photo.
-function initialsImage(text: string): string {
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="512" height="640"><rect width="100%" height="100%" fill="#51B04C"/><text x="50%" y="52%" font-family="Inter,Arial,sans-serif" font-size="200" font-weight="600" fill="#17191A" text-anchor="middle" dominant-baseline="middle">${text}</text></svg>`;
-  return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
-}
-
 async function Profile({ params }: { params: PageProps<"/u/[username]">["params"] }) {
   await requireStep("done");
   const result = await getProfile((await params).username);
@@ -43,7 +37,7 @@ async function Profile({ params }: { params: PageProps<"/u/[username]">["params"
       <section className="flex flex-col items-center gap-6 md:flex-row md:items-start md:gap-12">
         <div className="w-full max-w-xs">
           <MemberCard
-            avatarUrl={photo ?? initialsImage(initials(profile.firstName, profile.lastName))}
+            avatarUrl={photo ?? initialsImageUrl(initials(profile.firstName, profile.lastName))}
             name={`${profile.firstName} ${profile.lastName}`}
             title={[profile.cohortName, profile.city].filter(Boolean).join(" · ")}
             handle={profile.username}

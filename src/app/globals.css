@@ -49,3 +49,22 @@ body {
   background: var(--page);
   color: var(--ink);
 }
+
+/* React Bits Chroma Grid sets its theme as inline variables after hydration. In dark mode, apply its
+   dark values from the stylesheet straight away so server-rendered cards never flash light. */
+[data-theme="dark"] .chroma-grid {
+  --chroma-frame: rgba(38, 35, 46, 0.66) !important;
+  --chroma-frame-edge: rgba(255, 255, 255, 0.08) !important;
+  --chroma-frame-highlight: rgba(255, 255, 255, 0.07) !important;
+  --chroma-frame-shadow: 0 22px 44px -20px rgba(0, 0, 0, 0.8), 0 6px 16px -8px rgba(0, 0, 0, 0.5) !important;
+  --chroma-tile: linear-gradient(180deg, #3a3644 0%, #27242f 100%) !important;
+  --chroma-tile-edge: rgba(255, 255, 255, 0.07) !important;
+  --chroma-tile-highlight: rgba(255, 255, 255, 0.12) !important;
+  --chroma-tile-shadow: 0 4px 10px -4px rgba(0, 0, 0, 0.7) !important;
+  --chroma-media-edge: rgba(255, 255, 255, 0.06) !important;
+  --chroma-well: rgba(255, 255, 255, 0.08) !important;
+  --chroma-ink: #f4f4f5 !important;
+  --chroma-muted: rgba(244, 244, 245, 0.55) !important;
+  --chroma-hover: brightness(1.12) !important;
+  --chroma-press: brightness(0.85) !important;
+}

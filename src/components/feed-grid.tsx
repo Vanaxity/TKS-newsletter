@@ -8,11 +8,6 @@ import ChromaGrid from "./react-bits/ChromaGrid";
 const LABELS = new Map<string, string>(INTERESTS.map((i) => [i.slug, i.label]));
 
 const touchQuery = "(hover: none)";
-const subscribeTheme = (cb: () => void) => {
-  const obs = new MutationObserver(cb);
-  obs.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
-  return () => obs.disconnect();
-};
 const subscribe = (cb: () => void) => {
   const mq = window.matchMedia(touchQuery);
   mq.addEventListener("change", cb);
@@ -26,12 +21,6 @@ export function FeedGrid({ items }: { items: FeedItem[] }) {
     subscribe,
     () => window.matchMedia(touchQuery).matches,
     () => false,
-  );
-
-  const theme = useSyncExternalStore(
-    subscribeTheme,
-    () => (document.documentElement.getAttribute("data-theme") === "dark" ? "dark" : "light"),
-    () => "light" as const,
   );
 
   if (!items.length) return null;
@@ -53,7 +42,8 @@ export function FeedGrid({ items }: { items: FeedItem[] }) {
   return (
     <ChromaGrid
       items={cards}
-      theme={theme}
+      // Always light here; dark mode comes from globals.css so it applies before hydration.
+      theme="light"
       columns={3}
       minCardWidth={240}
       aspectRatio="16 / 9"

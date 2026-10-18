@@ -16,8 +16,17 @@ export function squareCrop(width: number, height: number): { sx: number; sy: num
 }
 
 export function initials(first: string | null, last: string | null): string {
-  const letters = [first, last].map((n) => n?.trim().charAt(0).toUpperCase() ?? "").join("");
+  // Array.from splits by character, so an emoji isn't cut in half.
+  const letters = [first, last].map((n) => (Array.from(n?.trim() ?? "")[0] ?? "").toUpperCase()).join("");
   return letters || "?";
+}
+
+const escapeXml = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+// A green card with the member's initials, used by the Profile Card when there's no photo.
+export function initialsImageUrl(text: string): string {
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="512" height="640"><rect width="100%" height="100%" fill="#51B04C"/><text x="50%" y="52%" font-family="Inter,Arial,sans-serif" font-size="200" font-weight="600" fill="#17191A" text-anchor="middle" dominant-baseline="middle">${escapeXml(text)}</text></svg>`;
+  return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
 }
 
 export function avatarPathFor(userId: string): string {

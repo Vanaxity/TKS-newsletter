@@ -1,6 +1,6 @@
 "use server";
 
-import { saveRating } from "@/lib/articles/rating";
+import { clearRating, saveRating } from "@/lib/articles/rating";
 import { getViewer } from "@/lib/auth/viewer";
 import { createServerSupabase } from "@/lib/supabase/server";
 
@@ -11,6 +11,12 @@ export async function rateArticle(articleId: number, score: number): Promise<{ o
   const viewer = await getViewer();
   if (!viewer || !validId(articleId) || !Number.isInteger(score) || score < 1 || score > 10) return { ok: false };
   return { ok: await saveRating(await createServerSupabase(), viewer.id, articleId, score) };
+}
+
+export async function removeRating(articleId: number): Promise<{ ok: boolean }> {
+  const viewer = await getViewer();
+  if (!viewer || !validId(articleId)) return { ok: false };
+  return { ok: await clearRating(await createServerSupabase(), viewer.id, articleId) };
 }
 
 export async function toggleSave(articleId: number): Promise<{ saved: boolean } | null> {

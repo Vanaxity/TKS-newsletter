@@ -4,7 +4,7 @@ import { Bookmark01Icon, RepeatIcon, Share08Icon } from "@hugeicons/core-free-ic
 import { HugeiconsIcon } from "@hugeicons/react";
 import { useRef, useState, useTransition } from "react";
 import { CometDial, PulseHeart } from "@/components/react-bits/typed";
-import { rateArticle, toggleRepost, toggleSave } from "./actions";
+import { rateArticle, removeRating, toggleRepost, toggleSave } from "./actions";
 
 type Props = {
   articleId: number;
@@ -25,6 +25,7 @@ export function ArticleActions({ articleId, headline, repostCount, ratingAvg, ra
   const [reposted, setReposted] = useState(mine.reposted);
   const [count, setCount] = useState(repostCount);
   const [shareNote, setShareNote] = useState<string | null>(null);
+  const [actionError, setActionError] = useState<string | null>(null);
   const [, startTransition] = useTransition();
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -35,27 +36,65 @@ export function ArticleActions({ articleId, headline, repostCount, ratingAvg, ra
     // Save once the dial settles, not on every tick of a drag.
     timer.current = setTimeout(() => {
       startTransition(async () => {
-        const res = await rateArticle(articleId, value);
-        setRateState(res.ok ? "saved" : "error");
+        try {
+          const res = await rateArticle(articleId, value);
+          setRateState(res.ok ? "saved" : "error");
+        } catch {
+          setRateState("error");
+        }
       });
     }, 600);
   }
 
+  function onClearRating() {
+    if (timer.current) clearTimeout(timer.current);
+    startTransition(async () => {
+      try {
+        const res = await removeRating(articleId);
+        if (res.ok) {
+          setScore(null);
+          setRateState("idle");
+        } else setRateState("error");
+      } catch {
+        setRateState("error");
+      }
+    });
+  }
+
+  // A lost connection mustn't take the page down: show a note and put things back.
+  function failed(message: string) {
+    setActionError(message);
+    setTimeout(() => setActionError(null), 3000);
+  }
+
   function onRepost() {
     startTransition(async () => {
-      const res = await toggleRepost(articleId);
-      if (res) {
+      try {
+        const res = await toggleRepost(articleId);
+        if (!res) return failed("Couldn't repost. Log in again and retry.");
         setReposted(res.reposted);
         setCount(res.count);
+      } catch {
+        failed("Couldn't repost. Check your connection and try again.");
       }
     });
   }
 
   function onSave() {
-    setSaved((s) => !s);
+    const before = saved;
+    setSaved(!before);
     startTransition(async () => {
-      const res = await toggleSave(articleId);
-      if (res) setSaved(res.saved);
+      try {
+        const res = await toggleSave(articleId);
+        if (!res) {
+          setSaved(before);
+          return failed("Couldn't save. Log in again and retry.");
+        }
+        setSaved(res.saved);
+      } catch {
+        setSaved(before);
+        failed("Couldn't save. Check your connection and try again.");
+      }
     });
   }
 
@@ -68,7 +107,9 @@ export function ArticleActions({ articleId, headline, repostCount, ratingAvg, ra
       }
       await navigator.clipboard.writeText(url);
       setShareNote("Link copied");
-    } catch {
+    } catch (err) {
+      // Closing the phone's share sheet isn't an error.
+      if (err instanceof Error && err.name === "AbortError") return;
       setShareNote("Couldn't share. Copy the address bar instead.");
     }
     setTimeout(() => setShareNote(null), 2000);
@@ -88,6 +129,8 @@ export function ArticleActions({ articleId, headline, repostCount, ratingAvg, ra
           ink="#F2F2F2"
           size={170}
           onChange={onRate}
+          // Also save on release, so choosing the starting value (5) still counts.
+          onChangeEnd={(value) => onRate(value)}
         />
         <p className="text-sm text-tks-line" aria-live="polite">
           {rateState === "saving"
@@ -98,6 +141,11 @@ export function ArticleActions({ articleId, headline, repostCount, ratingAvg, ra
                 ? `You rated it ${score}/10`
                 : "Drag to rate it out of 10"}
         </p>
+        {score ? (
+          <button type="button" onClick={onClearRating} className="text-xs text-tks-grey underline underline-offset-4 hover:text-tks-white">
+            Clear my rating
+          </button>
+        ) : null}
         {ratingAvg !== null ? (
           <p className="text-sm text-tks-line">
             Average {ratingAvg} from {ratingCount} ratings
@@ -139,8 +187,8 @@ export function ArticleActions({ articleId, headline, repostCount, ratingAvg, ra
             Share
           </button>
         </div>
-        <p className="h-5 text-sm text-tks-green" aria-live="polite">
-          {shareNote}
+        <p className={`h-5 text-sm ${actionError ? "text-red-300" : "text-tks-green"}`} aria-live="polite">
+          {actionError ?? shareNote}
         </p>
       </div>
     </section>

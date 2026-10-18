@@ -65,7 +65,7 @@ export function AvatarPicker({ userId, initialUrl, initialPath, fallbackInitials
           />
         </label>
         <p className="text-sm text-muted">Optional. JPG, PNG or WebP, up to 5 MB.</p>
-        {error ? <p className="text-sm text-red-700">{error}</p> : null}
+        {error ? <p className="text-sm text-red-700 dark:text-red-400">{error}</p> : null}
       </div>
       <input type="hidden" name="avatarPath" value={path} />
     </div>
