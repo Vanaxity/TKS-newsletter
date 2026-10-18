@@ -1,6 +1,6 @@
 "use client";
 
-import { AnimatedContent } from "@/components/react-bits/animated-content";
+import { Reveal } from "./reveal";
 
 const STEPS = [
   {
@@ -20,20 +20,14 @@ const STEPS = [
   },
 ];
 
-// Three steps that rise in one after another as they scroll into view (React Bits Animated Content).
+// Three steps that rise in one after another as they scroll into view.
 export function HowItWorks() {
   return (
     <section className="mx-auto w-full max-w-6xl px-4 py-20">
-      <h2 className="text-3xl font-semibold tracking-tight text-ink sm:text-4xl">How it works</h2>
-      <AnimatedContent
-        distance={60}
-        duration={0.7}
-        stagger={0.12}
-        threshold={0.15}
-        className="mt-10 grid gap-4 md:grid-cols-3"
-        // Visible in the server HTML; the animation hides and reveals the cards once JavaScript runs.
-        style={{ visibility: "visible" }}
-      >
+      <Reveal preset="heading">
+        <h2 className="text-3xl font-semibold tracking-tight text-ink sm:text-4xl">How it works</h2>
+      </Reveal>
+      <Reveal preset="cards" className="mt-10 grid gap-4 md:grid-cols-3">
         {STEPS.map((s) => (
           <div key={s.n} className="flex flex-col gap-3 rounded-3xl border border-line bg-card p-6">
             <span className="flex size-10 items-center justify-center rounded-full bg-tks-green text-lg font-semibold text-on-green">
@@ -43,7 +37,7 @@ export function HowItWorks() {
             <p className="text-muted">{s.body}</p>
           </div>
         ))}
-      </AnimatedContent>
+      </Reveal>
     </section>
   );
 }
