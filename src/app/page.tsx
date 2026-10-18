@@ -1,4 +1,12 @@
 import Link from "next/link";
+import { Suspense } from "react";
+import { getViewer } from "@/lib/auth/viewer";
+import { pathForStep } from "@/lib/auth/steps";
+
+const primary =
+  "rounded-full bg-tks-green px-6 py-3 font-semibold text-tks-black transition hover:bg-tks-green-hover";
+const secondary =
+  "rounded-full border border-tks-black px-6 py-3 font-semibold text-tks-black transition hover:bg-tks-black hover:text-tks-white";
 
 export default function Home() {
   return (
@@ -8,19 +16,34 @@ export default function Home() {
         Cool videos from #r-thisiscool, turned into articles. Coming soon.
       </p>
       <div className="flex flex-wrap items-center justify-center gap-3">
-        <Link
-          href="/signup"
-          className="rounded-full bg-tks-green px-6 py-3 font-semibold text-tks-black transition hover:bg-tks-green-hover"
-        >
-          Sign up
-        </Link>
-        <Link
-          href="/login"
-          className="rounded-full border border-tks-black px-6 py-3 font-semibold text-tks-black transition hover:bg-tks-black hover:text-tks-white"
-        >
-          Log in
-        </Link>
+        <Suspense fallback={<SignedOutButtons />}>
+          <HomeButtons />
+        </Suspense>
       </div>
     </main>
+  );
+}
+
+function SignedOutButtons() {
+  return (
+    <>
+      <Link href="/signup" className={primary}>
+        Sign up
+      </Link>
+      <Link href="/login" className={secondary}>
+        Log in
+      </Link>
+    </>
+  );
+}
+
+async function HomeButtons() {
+  const viewer = await getViewer();
+  if (!viewer) return <SignedOutButtons />;
+  const done = viewer.profile.onboardingStep === "done";
+  return (
+    <Link href={pathForStep(viewer.profile.onboardingStep)} className={primary}>
+      {done ? "Go to your feed" : "Finish setting up"}
+    </Link>
   );
 }
