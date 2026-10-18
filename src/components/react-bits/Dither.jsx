@@ -650,7 +650,8 @@ const Dither = ({
       gl.deleteVertexArray(vao);
       gl.deleteTexture(field);
       gl.deleteFramebuffer(framebuffer);
-      gl.getExtension('WEBGL_lose_context')?.loseContext();
+      // TKS change: don't lose the context here. React re-runs effects on the same canvas (Strict Mode,
+      // remounts), and a lost context makes the second run draw nothing. The browser frees it with the canvas.
     };
   }, []);
 
