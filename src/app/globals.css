@@ -1,6 +1,10 @@
 @import "tailwindcss";
 
+/* `dark:` follows the data-theme attribute set by the no-flash script and the theme toggle. */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
 @theme {
+  /* TKS brand colours: fixed in both themes */
   --color-tks-green: #51b04c;
   --color-tks-green-hover: #459a40;
   --color-tks-black: #17191a;
@@ -8,11 +12,40 @@
   --color-tks-white: #ffffff;
   --color-tks-grey: #8f9091;
   --color-tks-line: #d3d3d3;
+  /* Text on green is always TKS black, in light and dark mode */
+  --color-on-green: #17191a;
 
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
 }
 
+/* Surfaces and text that switch with the theme */
+@theme inline {
+  --color-page: var(--page);
+  --color-card: var(--card);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+}
+
+:root {
+  --page: #f2f2f2;
+  --card: #ffffff;
+  --ink: #17191a;
+  --muted: #8f9091;
+  --line: #d3d3d3;
+  color-scheme: light;
+}
+
+[data-theme="dark"] {
+  --page: #101213;
+  --card: #1b1d1f;
+  --ink: #f2f2f2;
+  --muted: #a3a5a7;
+  --line: #2e3133;
+  color-scheme: dark;
+}
+
 body {
-  background: var(--color-tks-offwhite);
-  color: var(--color-tks-black);
+  background: var(--page);
+  color: var(--ink);
 }

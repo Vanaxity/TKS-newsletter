@@ -6,10 +6,10 @@ import { ThemeToggle } from "./theme-toggle";
 export function SiteHeader() {
   return (
     <header className="flex flex-wrap items-center justify-between gap-4">
-      <Link href="/feed" className="text-sm font-semibold tracking-tight text-tks-black">
+      <Link href="/feed" className="text-sm font-semibold tracking-tight text-ink">
         TKS articles
       </Link>
-      <nav className="flex flex-wrap items-center gap-4 text-sm font-medium text-tks-black">
+      <nav className="flex flex-wrap items-center gap-4 text-sm font-medium text-ink">
         <Link href="/feed" className="hover:underline hover:underline-offset-4">
           Feed
         </Link>

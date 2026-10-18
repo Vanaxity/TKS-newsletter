@@ -35,9 +35,9 @@ export function SignupForm() {
       />
       <FormError message={state.error} />
       <SubmitButton pendingText="Creating your account…">Create account</SubmitButton>
-      <p className="text-center text-sm text-tks-grey">
+      <p className="text-center text-sm text-muted">
         Already have an account?{" "}
-        <Link href="/login" className="font-medium text-tks-black underline underline-offset-4">
+        <Link href="/login" className="font-medium text-ink underline underline-offset-4">
           Log in
         </Link>
       </p>

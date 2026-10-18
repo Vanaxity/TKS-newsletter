@@ -20,10 +20,10 @@ export default function ArticlePage({ params }: PageProps<"/a/[slug]">) {
   return (
     <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-8 px-4 py-10">
       {/* The homepage sends members on to their feed, so this works for visitors from shared links too. */}
-      <Link href="/" className="text-sm font-semibold tracking-tight text-tks-black">
+      <Link href="/" className="text-sm font-semibold tracking-tight text-ink">
         TKS articles
       </Link>
-      <Suspense fallback={<p className="text-tks-grey">Loading the article…</p>}>
+      <Suspense fallback={<p className="text-muted">Loading the article…</p>}>
         <ArticleBody params={params} />
       </Suspense>
     </main>
@@ -51,7 +51,7 @@ async function ArticleBody({ params }: { params: PageProps<"/a/[slug]">["params"
             mine={result.article.mine}
           />
           {result.article.videoTitle ? (
-            <p className="text-sm text-tks-grey">
+            <p className="text-sm text-muted">
               Based on “{result.article.videoTitle}”{result.article.channelName ? ` by ${result.article.channelName}` : ""}.
             </p>
           ) : null}
@@ -60,7 +60,7 @@ async function ArticleBody({ params }: { params: PageProps<"/a/[slug]">["params"
         <>
           <div className="relative">
             <Markdown>{result.article.previewMd}</Markdown>
-            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-tks-offwhite" aria-hidden />
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-page" aria-hidden />
           </div>
           <SignUpWall />
         </>
@@ -75,19 +75,19 @@ function Header({ article, member }: { article: ArticleCard; member: boolean }) 
       <div className="flex flex-wrap items-center gap-2 text-sm">
         {article.tags.map((t) =>
           member ? (
-            <Link key={t} href={`/feed?topic=${t}`} className="rounded-full bg-tks-green px-3 py-1 font-medium text-tks-black">
+            <Link key={t} href={`/feed?topic=${t}`} className="rounded-full bg-tks-green px-3 py-1 font-medium text-on-green">
               {LABELS.get(t) ?? t}
             </Link>
           ) : (
-            <span key={t} className="rounded-full bg-tks-green px-3 py-1 font-medium text-tks-black">
+            <span key={t} className="rounded-full bg-tks-green px-3 py-1 font-medium text-on-green">
               {LABELS.get(t) ?? t}
             </span>
           ),
         )}
-        <span className="text-tks-grey">{article.readMinutes} min read</span>
+        <span className="text-muted">{article.readMinutes} min read</span>
       </div>
-      <h1 className="text-4xl font-semibold tracking-tight text-tks-black sm:text-5xl">{article.headline}</h1>
-      <p className="text-xl text-tks-grey">{article.dek}</p>
+      <h1 className="text-4xl font-semibold tracking-tight text-ink sm:text-5xl">{article.headline}</h1>
+      <p className="text-xl text-muted">{article.dek}</p>
     </header>
   );
 }
@@ -98,7 +98,7 @@ function SignUpWall() {
       <h2 className="text-2xl font-semibold tracking-tight">Read the rest on TKS articles</h2>
       <p className="text-tks-line">It&apos;s for TKS students only. Sign up with the join code from TKS Slack to read every article.</p>
       <div className="flex flex-wrap gap-3">
-        <Link href="/signup" className="rounded-full bg-tks-green px-6 py-3 font-semibold text-tks-black hover:bg-tks-green-hover">
+        <Link href="/signup" className="rounded-full bg-tks-green px-6 py-3 font-semibold text-on-green hover:bg-tks-green-hover">
           Sign up
         </Link>
         <Link href="/login" className="rounded-full border border-tks-white px-6 py-3 font-semibold text-tks-white hover:bg-tks-white hover:text-tks-black">

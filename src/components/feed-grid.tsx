@@ -8,6 +8,11 @@ import ChromaGrid from "./react-bits/ChromaGrid";
 const LABELS = new Map<string, string>(INTERESTS.map((i) => [i.slug, i.label]));
 
 const touchQuery = "(hover: none)";
+const subscribeTheme = (cb: () => void) => {
+  const obs = new MutationObserver(cb);
+  obs.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+  return () => obs.disconnect();
+};
 const subscribe = (cb: () => void) => {
   const mq = window.matchMedia(touchQuery);
   mq.addEventListener("change", cb);
@@ -16,11 +21,20 @@ const subscribe = (cb: () => void) => {
 
 // The feed as React Bits Chroma Grid cards. Phones have no hover, so cards show in colour there.
 export function FeedGrid({ items }: { items: FeedItem[] }) {
+  // Chroma Grid falls back to its own sample photos when empty, so never render it without items.
   const isTouch = useSyncExternalStore(
     subscribe,
     () => window.matchMedia(touchQuery).matches,
     () => false,
   );
+
+  const theme = useSyncExternalStore(
+    subscribeTheme,
+    () => (document.documentElement.getAttribute("data-theme") === "dark" ? "dark" : "light"),
+    () => "light" as const,
+  );
+
+  if (!items.length) return null;
 
   const cards = items.map(({ article, outside }) => ({
     image: thumbnailUrl(article.youtubeVideoId),
@@ -39,7 +53,7 @@ export function FeedGrid({ items }: { items: FeedItem[] }) {
   return (
     <ChromaGrid
       items={cards}
-      theme="light"
+      theme={theme}
       columns={3}
       minCardWidth={240}
       aspectRatio="16 / 9"

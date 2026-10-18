@@ -18,7 +18,7 @@ export default function ProfilePage({ params }: PageProps<"/u/[username]">) {
   return (
     <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-10 px-4 py-10">
       <SiteHeader />
-      <Suspense fallback={<p className="text-tks-grey">Loading profile…</p>}>
+      <Suspense fallback={<p className="text-muted">Loading profile…</p>}>
         <Profile params={params} />
       </Suspense>
     </main>
@@ -51,16 +51,16 @@ async function Profile({ params }: { params: PageProps<"/u/[username]">["params"
           />
         </div>
         <div className="flex flex-col gap-3">
-          <h1 className="text-3xl font-semibold tracking-tight text-tks-black">
+          <h1 className="text-3xl font-semibold tracking-tight text-ink">
             {profile.firstName} {profile.lastName}
           </h1>
-          <p className="text-tks-grey">
+          <p className="text-muted">
             @{profile.username}
             {profile.cohortName ? ` · ${profile.cohortName}` : ""} · {profile.city}
           </p>
           <div className="flex flex-wrap gap-2">
             {profile.interests.map((slug) => (
-              <span key={slug} className="rounded-full bg-tks-green px-3 py-1 text-sm font-medium text-tks-black">
+              <span key={slug} className="rounded-full bg-tks-green px-3 py-1 text-sm font-medium text-on-green">
                 {LABELS.get(slug) ?? slug}
               </span>
             ))}
@@ -69,11 +69,11 @@ async function Profile({ params }: { params: PageProps<"/u/[username]">["params"
       </section>
 
       <section id="reposts" className="flex scroll-mt-8 flex-col gap-4">
-        <h2 className="text-2xl font-semibold tracking-tight text-tks-black">Reposts</h2>
+        <h2 className="text-2xl font-semibold tracking-tight text-ink">Reposts</h2>
         {reposts.length ? (
           <FeedGrid items={reposts} />
         ) : (
-          <p className="rounded-3xl bg-tks-white p-8 text-tks-black">No reposts yet.</p>
+          <p className="rounded-3xl bg-card p-8 text-ink">No reposts yet.</p>
         )}
       </section>
     </div>

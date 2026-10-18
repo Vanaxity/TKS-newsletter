@@ -11,7 +11,7 @@ export const metadata = { title: "Your profile · TKS articles" };
 export default function ProfileStepPage() {
   return (
     <AuthCard title="Set up your profile" subtitle="This is what other TKS students see.">
-      <Suspense fallback={<p className="text-tks-grey">Loading…</p>}>
+      <Suspense fallback={<p className="text-muted">Loading…</p>}>
         <ProfileStep />
       </Suspense>
     </AuthCard>

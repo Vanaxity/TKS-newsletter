@@ -47,13 +47,13 @@ export function AvatarPicker({ userId, initialUrl, initialPath, fallbackInitials
           // eslint-disable-next-line @next/next/no-img-element -- signed or object URL, not optimisable
           <img src={preview} alt="Your profile photo" className="size-full object-cover" />
         ) : (
-          <span className="flex size-full items-center justify-center text-2xl font-semibold text-tks-black">
+          <span className="flex size-full items-center justify-center text-2xl font-semibold text-on-green">
             {fallbackInitials}
           </span>
         )}
       </div>
       <div className="flex flex-col gap-1">
-        <label className="cursor-pointer text-sm font-medium text-tks-black underline underline-offset-4">
+        <label className="cursor-pointer text-sm font-medium text-ink underline underline-offset-4">
           {busy ? "Uploading…" : preview ? "Change photo" : "Add a photo"}
           <input
             ref={input}
@@ -64,7 +64,7 @@ export function AvatarPicker({ userId, initialUrl, initialPath, fallbackInitials
             onChange={(e) => onChange(e.target.files?.[0])}
           />
         </label>
-        <p className="text-sm text-tks-grey">Optional. JPG, PNG or WebP, up to 5 MB.</p>
+        <p className="text-sm text-muted">Optional. JPG, PNG or WebP, up to 5 MB.</p>
         {error ? <p className="text-sm text-red-700">{error}</p> : null}
       </div>
       <input type="hidden" name="avatarPath" value={path} />

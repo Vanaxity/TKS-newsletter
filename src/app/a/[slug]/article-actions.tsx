@@ -124,7 +124,7 @@ export function ArticleActions({ articleId, headline, repostCount, ratingAvg, ra
             onClick={onSave}
             aria-pressed={saved}
             className={`flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition ${
-              saved ? "bg-tks-green text-tks-black" : "border border-tks-grey text-tks-white hover:border-tks-white"
+              saved ? "bg-tks-green text-on-green" : "border border-tks-grey text-tks-white hover:border-tks-white"
             }`}
           >
             <HugeiconsIcon icon={Bookmark01Icon} size={18} />

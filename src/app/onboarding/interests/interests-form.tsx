@@ -32,7 +32,7 @@ export function InterestsForm({ initial, finishedBefore }: { initial: string[]; 
               <label
                 key={slug}
                 className={`cursor-pointer select-none rounded-full border px-4 py-2 text-sm font-medium transition ${
-                  on ? "border-tks-green bg-tks-green text-tks-black" : "border-tks-line bg-tks-white text-tks-black hover:border-tks-black"
+                  on ? "border-tks-green bg-tks-green text-on-green" : "border-line bg-card text-on-green hover:border-ink"
                 }`}
               >
                 <input type="checkbox" name="interests" value={slug} checked={on} onChange={() => toggle(slug)} className="sr-only" />
@@ -45,7 +45,7 @@ export function InterestsForm({ initial, finishedBefore }: { initial: string[]; 
       </fieldset>
       <FormError message={state.error} />
       <div className="flex items-center justify-between gap-3">
-        <Link href="/onboarding/profile" className="text-sm font-medium text-tks-black underline underline-offset-4">
+        <Link href="/onboarding/profile" className="text-sm font-medium text-ink underline underline-offset-4">
           Back
         </Link>
         <SubmitButton disabled={picked.size === 0} pendingText="Saving…">
