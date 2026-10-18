@@ -133,3 +133,65 @@ export async function getArticleMeta(slug: string): Promise<{ headline: string; 
   const row = (data as { headline: string; dek: string }[] | null)?.[0];
   return row ? { headline: row.headline, dek: row.dek } : null;
 }
+
+// Articles in a list of ids, keeping the list's order (for Saved and Reposts).
+async function cardsInOrder(ids: number[]): Promise<FeedItem[]> {
+  if (!ids.length) return [];
+  const supabase = await createServerSupabase();
+  const { data } = await supabase.from("articles").select(CARD_COLUMNS).eq("status", "published").in("id", ids);
+  const byId = new Map((data ?? []).map((r) => [r.id as number, toCard(r)]));
+  return ids.flatMap((id) => (byId.has(id) ? [{ article: byId.get(id)!, outside: false }] : []));
+}
+
+// The member's saved articles, most recently saved first. Private: RLS returns only their own saves.
+export async function getSaved(viewer: Viewer): Promise<FeedItem[]> {
+  const supabase = await createServerSupabase();
+  const { data } = await supabase
+    .from("saves")
+    .select("article_id")
+    .eq("user_id", viewer.id)
+    .order("created_at", { ascending: false })
+    .limit(60);
+  return cardsInOrder((data ?? []).map((r) => r.article_id as number));
+}
+
+export type PublicProfile = {
+  id: string;
+  username: string;
+  firstName: string;
+  lastName: string;
+  avatarPath: string | null;
+  cohortName: string | null;
+  city: string;
+  interests: string[];
+};
+
+// A finished member's profile and their reposts, newest first. Members only (RLS).
+export async function getProfile(username: string): Promise<{ profile: PublicProfile; reposts: FeedItem[] } | null> {
+  const supabase = await createServerSupabase();
+  const { data: p } = await supabase
+    .from("profiles")
+    .select("id, username, first_name, last_name, avatar_path, city, cohorts(name)")
+    .eq("username", username.toLowerCase())
+    .eq("onboarding_step", "done")
+    .maybeSingle();
+  if (!p) return null;
+  const [{ data: interests }, { data: reposts }] = await Promise.all([
+    supabase.from("profile_interests").select("interest_slug").eq("profile_id", p.id),
+    supabase.from("reposts").select("article_id").eq("user_id", p.id).order("created_at", { ascending: false }).limit(60),
+  ]);
+  const cohort = p.cohorts as unknown as { name: string } | null;
+  return {
+    profile: {
+      id: p.id,
+      username: p.username,
+      firstName: p.first_name,
+      lastName: p.last_name,
+      avatarPath: p.avatar_path,
+      cohortName: cohort?.name ?? null,
+      city: p.city,
+      interests: (interests ?? []).map((r) => r.interest_slug as string),
+    },
+    reposts: await cardsInOrder((reposts ?? []).map((r) => r.article_id as number)),
+  };
+}

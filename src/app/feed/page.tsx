@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { Suspense } from "react";
-import { logout } from "@/app/actions/logout";
 import { Avatar } from "@/components/avatar";
 import { FeedGrid } from "@/components/feed-grid";
+import { SiteHeader } from "@/components/site-header";
 import { getFeed } from "@/lib/articles/queries";
 import { avatarSignedUrl } from "@/lib/avatar-url";
 import { requireStep } from "@/lib/auth/viewer";
@@ -14,16 +14,7 @@ export const metadata = { title: "Your feed · TKS articles" };
 export default function FeedPage({ searchParams }: PageProps<"/feed">) {
   return (
     <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-8 px-4 py-10">
-      <header className="flex items-center justify-between">
-        <Link href="/" className="text-sm font-semibold tracking-tight text-tks-black">
-          TKS articles
-        </Link>
-        <form action={logout}>
-          <button type="submit" className="text-sm font-medium text-tks-black underline underline-offset-4">
-            Log out
-          </button>
-        </form>
-      </header>
+      <SiteHeader />
       <Suspense fallback={<p className="text-tks-grey">Loading your feed…</p>}>
         <Feed searchParams={searchParams} />
       </Suspense>
