@@ -10,7 +10,8 @@
     "typecheck": "next typegen && tsc --noEmit",
     "test": "vitest run --passWithNoTests",
     "summarise": "tsx scripts/summarise.ts",
-    "test:int": "vitest run --config vitest.integration.config.ts"
+    "test:int": "vitest run --config vitest.integration.config.ts",
+    "draft-article": "tsx scripts/draft-article.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",
