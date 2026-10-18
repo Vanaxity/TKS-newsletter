@@ -1,6 +1,10 @@
 @import "tailwindcss";
 
+/* `dark:` follows the data-theme attribute set by the no-flash script and the theme toggle. */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
 @theme {
+  /* TKS brand colours: fixed in both themes */
   --color-tks-green: #51b04c;
   --color-tks-green-hover: #459a40;
   --color-tks-black: #17191a;
@@ -8,11 +12,59 @@
   --color-tks-white: #ffffff;
   --color-tks-grey: #8f9091;
   --color-tks-line: #d3d3d3;
+  /* Text on green is always TKS black, in light and dark mode */
+  --color-on-green: #17191a;
 
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
 }
 
+/* Surfaces and text that switch with the theme */
+@theme inline {
+  --color-page: var(--page);
+  --color-card: var(--card);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+}
+
+:root {
+  --page: #f2f2f2;
+  --card: #ffffff;
+  --ink: #17191a;
+  --muted: #8f9091;
+  --line: #d3d3d3;
+  color-scheme: light;
+}
+
+[data-theme="dark"] {
+  --page: #101213;
+  --card: #1b1d1f;
+  --ink: #f2f2f2;
+  --muted: #a3a5a7;
+  --line: #2e3133;
+  color-scheme: dark;
+}
+
 body {
-  background: var(--color-tks-offwhite);
-  color: var(--color-tks-black);
+  background: var(--page);
+  color: var(--ink);
+}
+
+/* React Bits Chroma Grid sets its theme as inline variables after hydration. In dark mode, apply its
+   dark values from the stylesheet straight away so server-rendered cards never flash light. */
+[data-theme="dark"] .chroma-grid {
+  --chroma-frame: rgba(38, 35, 46, 0.66) !important;
+  --chroma-frame-edge: rgba(255, 255, 255, 0.08) !important;
+  --chroma-frame-highlight: rgba(255, 255, 255, 0.07) !important;
+  --chroma-frame-shadow: 0 22px 44px -20px rgba(0, 0, 0, 0.8), 0 6px 16px -8px rgba(0, 0, 0, 0.5) !important;
+  --chroma-tile: linear-gradient(180deg, #3a3644 0%, #27242f 100%) !important;
+  --chroma-tile-edge: rgba(255, 255, 255, 0.07) !important;
+  --chroma-tile-highlight: rgba(255, 255, 255, 0.12) !important;
+  --chroma-tile-shadow: 0 4px 10px -4px rgba(0, 0, 0, 0.7) !important;
+  --chroma-media-edge: rgba(255, 255, 255, 0.06) !important;
+  --chroma-well: rgba(255, 255, 255, 0.08) !important;
+  --chroma-ink: #f4f4f5 !important;
+  --chroma-muted: rgba(244, 244, 245, 0.55) !important;
+  --chroma-hover: brightness(1.12) !important;
+  --chroma-press: brightness(0.85) !important;
 }

@@ -11,6 +11,7 @@ const cards = (prefix: string, n: number): ArticleCard[] =>
     readMinutes: 1,
     youtubeVideoId: "aircAruvnKk",
     publishedAt: "2026-10-18T00:00:00Z",
+    repostCount: 0,
   }));
 
 test("slug from a normal headline", () =>

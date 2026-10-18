@@ -4,7 +4,7 @@ import remarkGfm from "remark-gfm";
 // Article text. react-markdown ignores raw HTML, so nothing in an article can inject markup.
 export function Markdown({ children }: { children: string }) {
   return (
-    <div className="flex flex-col gap-5 text-lg leading-relaxed text-tks-black">
+    <div className="flex flex-col gap-5 text-lg leading-relaxed text-ink">
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         components={{
@@ -14,8 +14,8 @@ export function Markdown({ children }: { children: string }) {
           ul: ({ children }) => <ul className="flex list-disc flex-col gap-2 pl-6">{children}</ul>,
           ol: ({ children }) => <ol className="flex list-decimal flex-col gap-2 pl-6">{children}</ol>,
           strong: ({ children }) => <strong className="font-semibold">{children}</strong>,
-          code: ({ children }) => <code className="rounded bg-tks-offwhite px-1.5 py-0.5 text-base">{children}</code>,
-          blockquote: ({ children }) => <blockquote className="border-l-4 border-tks-green pl-4 text-tks-grey">{children}</blockquote>,
+          code: ({ children }) => <code className="rounded bg-page px-1.5 py-0.5 text-base">{children}</code>,
+          blockquote: ({ children }) => <blockquote className="border-l-4 border-tks-green pl-4 text-muted">{children}</blockquote>,
           a: ({ href, children }) => (
             <a href={href} className="underline underline-offset-4" target="_blank" rel="noopener noreferrer">
               {children}

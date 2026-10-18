@@ -6,6 +6,7 @@ export type ArticleCard = {
   readMinutes: number;
   youtubeVideoId: string;
   publishedAt: string;
+  repostCount: number;
 };
 
 export type FeedItem = { article: ArticleCard; outside: boolean };

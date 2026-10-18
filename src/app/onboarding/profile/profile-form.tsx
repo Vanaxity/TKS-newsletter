@@ -56,7 +56,7 @@ export function ProfileForm({ userId, cohorts, avatarUrl, initialInitials, defau
       </div>
 
       <fieldset className="flex flex-col gap-2">
-        <legend className="mb-1.5 text-sm font-medium text-tks-black">Which cohort are you from?</legend>
+        <legend className="mb-1.5 text-sm font-medium text-ink">Which cohort are you from?</legend>
         <div className="grid grid-cols-2 gap-3">
           {(
             [
@@ -67,7 +67,7 @@ export function ProfileForm({ userId, cohorts, avatarUrl, initialInitials, defau
             <label
               key={value}
               className={`cursor-pointer rounded-xl border px-4 py-3 text-center text-sm font-medium transition ${
-                cohortType === value ? "border-tks-black bg-tks-green text-tks-black" : "border-tks-line bg-tks-white text-tks-black"
+                cohortType === value ? "border-ink bg-tks-green text-on-green" : "border-line bg-card text-ink"
               }`}
             >
               <input
@@ -88,7 +88,7 @@ export function ProfileForm({ userId, cohorts, avatarUrl, initialInitials, defau
             aria-label="Cohort"
             defaultValue={cohorts.some((c) => String(c.id) === v.cohortId && c.type === cohortType) ? v.cohortId : ""}
             key={cohortType}
-            className={`mt-1 rounded-xl border bg-tks-white px-4 py-3 text-base text-tks-black ${e.cohortId ? "border-red-600" : "border-tks-line"}`}
+            className={`mt-1 rounded-xl border bg-card px-4 py-3 text-base text-ink ${e.cohortId ? "border-red-600" : "border-line"}`}
           >
             <option value="" disabled>
               Pick your cohort
@@ -100,7 +100,7 @@ export function ProfileForm({ userId, cohorts, avatarUrl, initialInitials, defau
             ))}
           </select>
         ) : null}
-        {e.cohortId || e.cohortType ? <p className="text-sm text-red-700">{e.cohortId ?? e.cohortType}</p> : null}
+        {e.cohortId || e.cohortType ? <p className="text-sm text-red-700 dark:text-red-400">{e.cohortId ?? e.cohortType}</p> : null}
       </fieldset>
 
       <Field label="City" name="city" autoComplete="address-level2" defaultValue={v.city} error={e.city} required />

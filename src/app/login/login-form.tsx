@@ -17,9 +17,9 @@ export function LoginForm() {
       <Field label="Password" name="password" type="password" autoComplete="current-password" required error={e.password} />
       <FormError message={state.error} />
       <SubmitButton pendingText="Logging in…">Log in</SubmitButton>
-      <p className="text-center text-sm text-tks-grey">
+      <p className="text-center text-sm text-muted">
         New here?{" "}
-        <Link href="/signup" className="font-medium text-tks-black underline underline-offset-4">
+        <Link href="/signup" className="font-medium text-ink underline underline-offset-4">
           Create an account
         </Link>
       </p>

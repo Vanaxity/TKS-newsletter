@@ -14,7 +14,7 @@ export function Avatar({
 }) {
   return (
     <span
-      className="inline-flex shrink-0 items-center justify-center overflow-hidden rounded-full bg-tks-green font-semibold text-tks-black"
+      className="inline-flex shrink-0 items-center justify-center overflow-hidden rounded-full bg-tks-green font-semibold text-on-green"
       style={{ width: size, height: size, fontSize: size * 0.36 }}
     >
       {url ? (

@@ -16,11 +16,14 @@ const subscribe = (cb: () => void) => {
 
 // The feed as React Bits Chroma Grid cards. Phones have no hover, so cards show in colour there.
 export function FeedGrid({ items }: { items: FeedItem[] }) {
+  // Chroma Grid falls back to its own sample photos when empty, so never render it without items.
   const isTouch = useSyncExternalStore(
     subscribe,
     () => window.matchMedia(touchQuery).matches,
     () => false,
   );
+
+  if (!items.length) return null;
 
   const cards = items.map(({ article, outside }) => ({
     image: thumbnailUrl(article.youtubeVideoId),
@@ -39,6 +42,7 @@ export function FeedGrid({ items }: { items: FeedItem[] }) {
   return (
     <ChromaGrid
       items={cards}
+      // Always light here; dark mode comes from globals.css so it applies before hydration.
       theme="light"
       columns={3}
       minCardWidth={240}

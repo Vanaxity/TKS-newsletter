@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { Suspense } from "react";
-import { logout } from "@/app/actions/logout";
 import { Avatar } from "@/components/avatar";
 import { FeedGrid } from "@/components/feed-grid";
+import { SiteHeader } from "@/components/site-header";
 import { getFeed } from "@/lib/articles/queries";
 import { avatarSignedUrl } from "@/lib/avatar-url";
 import { requireStep } from "@/lib/auth/viewer";
@@ -14,17 +14,8 @@ export const metadata = { title: "Your feed · TKS articles" };
 export default function FeedPage({ searchParams }: PageProps<"/feed">) {
   return (
     <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-8 px-4 py-10">
-      <header className="flex items-center justify-between">
-        <Link href="/" className="text-sm font-semibold tracking-tight text-tks-black">
-          TKS articles
-        </Link>
-        <form action={logout}>
-          <button type="submit" className="text-sm font-medium text-tks-black underline underline-offset-4">
-            Log out
-          </button>
-        </form>
-      </header>
-      <Suspense fallback={<p className="text-tks-grey">Loading your feed…</p>}>
+      <SiteHeader />
+      <Suspense fallback={<p className="text-muted">Loading your feed…</p>}>
         <Feed searchParams={searchParams} />
       </Suspense>
     </main>
@@ -52,15 +43,15 @@ async function Feed({ searchParams }: { searchParams: PageProps<"/feed">["search
         <div className="flex items-center gap-4">
           <Avatar url={avatarUrl} firstName={p.firstName} lastName={p.lastName} size={56} />
           <div>
-            <h1 className="text-3xl font-semibold tracking-tight text-tks-black">Hi {p.firstName}</h1>
-            <p className="text-tks-grey">Articles picked for what you&apos;re into.</p>
+            <h1 className="text-3xl font-semibold tracking-tight text-ink">Hi {p.firstName}</h1>
+            <p className="text-muted">Articles picked for what you&apos;re into.</p>
           </div>
         </div>
         <div className="flex gap-4 text-sm">
-          <Link href="/onboarding/profile" className="font-medium text-tks-black underline underline-offset-4">
+          <Link href="/onboarding/profile" className="font-medium text-ink underline underline-offset-4">
             Edit profile
           </Link>
-          <Link href="/onboarding/interests" className="font-medium text-tks-black underline underline-offset-4">
+          <Link href="/onboarding/interests" className="font-medium text-ink underline underline-offset-4">
             Edit interests
           </Link>
         </div>
@@ -76,7 +67,7 @@ async function Feed({ searchParams }: { searchParams: PageProps<"/feed">["search
       {items.length ? (
         <FeedGrid items={items} />
       ) : (
-        <p className="rounded-3xl bg-tks-white p-8 text-tks-black">
+        <p className="rounded-3xl bg-card p-8 text-ink">
           No articles here yet. New ones appear as soon as they&apos;re approved.
         </p>
       )}
@@ -90,7 +81,7 @@ function TopicChip({ href, label, active }: { href: string; label: string; activ
       href={href}
       aria-current={active ? "page" : undefined}
       className={`rounded-full border px-4 py-2 text-sm font-medium transition ${
-        active ? "border-tks-green bg-tks-green text-tks-black" : "border-tks-line bg-tks-white text-tks-black hover:border-tks-black"
+        active ? "border-tks-green bg-tks-green text-on-green" : "border-line bg-card text-ink hover:border-ink"
       }`}
     >
       {label}

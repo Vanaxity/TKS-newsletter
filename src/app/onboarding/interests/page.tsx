@@ -9,7 +9,7 @@ export const metadata = { title: "Your interests · TKS articles" };
 export default function InterestsStepPage() {
   return (
     <AuthCard title="What are you into?" subtitle="Pick at least one. Your feed shows articles about these.">
-      <Suspense fallback={<p className="text-tks-grey">Loading…</p>}>
+      <Suspense fallback={<p className="text-muted">Loading…</p>}>
         <InterestsStep />
       </Suspense>
     </AuthCard>
