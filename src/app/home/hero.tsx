@@ -2,12 +2,11 @@
 
 import dynamic from "next/dynamic";
 import { useRef, type ComponentType, type ReactNode } from "react";
-import type { ASCIITextProps, DitherProps, LaserFlowProps } from "@/components/react-bits/typed-home";
+import type { ASCIITextProps, DitherProps } from "@/components/react-bits/typed-home";
 import { useInView, useMotionPrefs } from "./use-motion";
 
 // The WebGL effects load in the browser only, after the headline and buttons are already on screen.
 const Dither = dynamic(() => import("@/components/react-bits/Dither"), { ssr: false }) as ComponentType<DitherProps>;
-const LaserFlow = dynamic(() => import("@/components/react-bits/LaserFlow"), { ssr: false }) as ComponentType<LaserFlowProps>;
 const ASCIIText = dynamic(() => import("@/components/react-bits/ASCIIText"), {
   ssr: false,
   loading: () => <Emphasis />,
@@ -21,11 +20,10 @@ function Emphasis() {
   );
 }
 
-// The always-dark hero: Dither waves behind, a green Laser Flow beam landing on the headline card,
-// "this is cool" in ASCII Text. Phones and "reduce motion" get the calm version.
+// The always-dark hero: soft Dither waves behind, "this is cool" in ASCII Text.
+// Phones and "reduce motion" get the calm version.
 export function Hero({ nav, actions }: { nav: ReactNode; actions: ReactNode }) {
   const sectionRef = useRef<HTMLElement>(null);
-  const cardRef = useRef<HTMLDivElement>(null);
   const { small, reduced } = useMotionPrefs();
   const inView = useInView(sectionRef);
   const rich = !small && !reduced;
@@ -42,49 +40,27 @@ export function Hero({ nav, actions }: { nav: ReactNode; actions: ReactNode }) {
       />
       <div aria-hidden className="absolute inset-0 -z-10">
         <Dither
-          waveColor="#7fd27a"
+          waveColor="#3c7f38"
           backgroundColor="#0b0c0d"
           ditherMode="bayer"
           colorNum={4}
-          pixelSize={3}
-          waveSpeed={0.05}
+          pixelSize={2}
+          waveSpeed={0.04}
           waveFrequency={3}
-          waveAmplitude={0.4}
-          contrast={1.5}
-          brightness={0.12}
+          waveAmplitude={0.3}
           mouseEffect="reveal"
-          mouseRadius={0.4}
+          mouseRadius={0.35}
           disableAnimation={reduced || !inView}
           dpr={small ? 1 : undefined}
         />
-        {/* Only fade the bottom edge into the page, so the dithered waves stay visible. */}
-        <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-b from-transparent to-[#0b0c0d]" />
+        {/* A light wash over the waves so they read as texture, fading fully into the next section. */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#0b0c0d]/10 via-[#0b0c0d]/35 to-[#0b0c0d]" />
       </div>
-      {rich ? (
-        <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
-          <LaserFlow
-            surfaceRef={cardRef}
-            beamPosition={0.62}
-            color={GREEN}
-            intensity={1.15}
-            flare={1.2}
-            spread={1.2}
-            spill={0.8}
-            fog={0.08}
-            dust={1.2}
-            mouseInteraction
-            paused={!inView}
-          />
-        </div>
-      ) : null}
 
       <div className="mx-auto w-full max-w-6xl px-4 pt-6">{nav}</div>
 
       <div className="mx-auto flex w-full max-w-5xl flex-1 items-end px-4 pb-16 pt-[24vh] sm:pb-24">
-        <div
-          ref={cardRef}
-          className="relative w-full rounded-3xl border border-white/10 bg-black/35 p-6 shadow-2xl backdrop-blur-[3px] sm:p-10"
-        >
+        <div className="relative w-full rounded-3xl border border-white/10 bg-black/35 p-6 shadow-2xl backdrop-blur-[3px] sm:p-10">
           <p className="mb-4 inline-flex rounded-full border border-tks-green/40 bg-tks-green/10 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-tks-green">
             For TKS students
           </p>

@@ -8,6 +8,8 @@ const PRESETS = {
   heading: { distance: 30, blur: 10, duration: 0.9 },
   // Card rows: rise in one after another.
   cards: { distance: 70, blur: 6, duration: 0.8, stagger: 0.12 },
+  // Step cards: flip up into place one after another, with a little overshoot.
+  flip: { distance: 80, tilt: 40, blur: 8, duration: 1, stagger: 0.18, ease: "back.out(1.4)" },
   // Chips: pop in, in random order.
   chips: { distance: 20, scale: 0.6, duration: 0.5, stagger: 0.04, staggerFrom: "random" as const },
   // Anything else: gentle fade up.
