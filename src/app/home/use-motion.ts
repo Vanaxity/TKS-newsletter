@@ -35,3 +35,23 @@ export function useInView(ref: RefObject<HTMLElement | null>): boolean {
   }, [ref]);
   return inView;
 }
+
+// Turns true the first time enough of an element scrolls into view, and stays true.
+export function useSeen(ref: RefObject<HTMLElement | null>, threshold = 0.3): boolean {
+  const [seen, setSeen] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+        setSeen(true);
+        observer.disconnect();
+      },
+      { threshold },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [ref, threshold]);
+  return seen;
+}

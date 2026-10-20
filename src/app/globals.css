@@ -16,6 +16,18 @@
   --color-on-green: #17191a;
 
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+
+  /* A slow bob for the "How it works" step icons */
+  --animate-float: float 4s ease-in-out infinite;
+  @keyframes float {
+    0%,
+    100% {
+      translate: 0 0;
+    }
+    50% {
+      translate: 0 -6px;
+    }
+  }
 }
 
 /* Surfaces and text that switch with the theme */
